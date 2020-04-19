@@ -4,7 +4,7 @@
 using namespace eosio;
 using namespace std;
 
-class [[eosio::contract]] flash : public contract {
+class [[eosio::contract("flash.sx")]] flash : public contract {
 
 public:
 	using contract::contract;

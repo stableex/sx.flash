@@ -14,10 +14,12 @@ void flash::borrow( const name to, const name contract, const asset quantity, co
 
 	// prevent sending transfer if `to` account does not contain any balance (prevents consuming RAM from contract)
 	const symbol_code symcode = quantity.symbol.code();
-	check( token::get_balance( contract, to, symcode ).amount, to.to_string() + " must have an open balance for " + symcode.to_string() );
+	token::accounts accounts( contract, to.value );
+	const auto accounts_itr = accounts.find( symcode.raw() );
+	check( accounts_itr != accounts.end(), to.to_string() + " must have an open balance for " + symcode.to_string() );
 
 	// get initial balance of contract
-	const asset balance = token::get_balance( contract, get_self(), quantity.symbol.code() );
+	const asset balance = token::get_balance( contract, get_self(), symcode );
 	check( balance.amount >= quantity.amount, "maximum borrow amount is " + balance.to_string() );
 
 	// transfer funds to borrower
