@@ -78,6 +78,32 @@ public:
 	[[eosio::action]]
 	asset checkbalance( const name account, const name contract, const asset quantity );
 
+    /**
+     * ## ACTION `callback`
+     *
+     * Notifies recipient account via `callback` action after transfer has been sent from `borrow` action
+     *
+     * - **authority**: `get_self()`
+     *
+     * ### params
+     *
+	 * - `{name} recipient` - callback recipient
+	 * - `{name} to` - receiver of flash loan
+	 * - `{name} contract` - token contract account
+	 * - `{asset} quantity` - flash loan request amount
+	 * - `{string} memo` - used for outgoing transfer
+	 *
+	 * ### Example 1
+     *
+	 * ```c++
+	 * [[eosio::on_notify("flash.sx::callback")]]
+	 * void callback( const name recipient, const name to, const name contract, asset quantity, const string memo )
+	 * {
+	 *     token::transfer_action transfer( contract, { get_self(), "active"_n });
+	 * 	   transfer.send( get_self(), "flash.sx"_n, quantity, memo );
+	 * }
+	 * ```
+     */
 	[[eosio::action]]
 	void callback( const name recipient, const name to, const name contract, const asset quantity, const string memo );
 

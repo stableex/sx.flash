@@ -22,17 +22,6 @@ public:
 	[[eosio::on_notify("flash.sx::callback")]]
 	void callback( const name recipient, const name to, const name contract, asset quantity, const string memo )
 	{
-		// do actions before sending funds back
-
-		// ==========================
-		// PLACE YOUR CODE HERE
-		//
-		// EXAMPLE CODE - add & minus
-		// ==========================
-		if ( memo == "minus" ) quantity.amount -= quantity.amount / 2;
-		if ( memo == "add" ) quantity.amount += quantity.amount / 2;
-
-		// repay flashloan
 		token::transfer_action transfer( contract, { get_self(), "active"_n });
 		transfer.send( get_self(), "flash.sx"_n, quantity, memo );
 	}

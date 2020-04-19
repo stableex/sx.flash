@@ -4,3 +4,4 @@ build
 .wasm
 .vscode
 .DS_Store
+eosc-vault.json
