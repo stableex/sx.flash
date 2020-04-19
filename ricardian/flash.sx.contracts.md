@@ -19,3 +19,14 @@ icon: @ICON_BASE_URL@/@VOTING_ICON_URI@
 ---
 
 Throws error if {{account}} as a balance of lower than {{ext_quantity}}.
+
+<h1 class="contract">callback</h1>
+
+---
+spec_version: "0.2.0"
+title: Callback
+summary: 'Notify recipient account action after transfer has been sent'
+icon: @ICON_BASE_URL@/@VOTING_ICON_URI@
+---
+
+Notify {{recipient}} account action after {{quantity}} transfer has been sent.

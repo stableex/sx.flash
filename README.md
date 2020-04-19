@@ -62,19 +62,20 @@ Account requests to borrow quantity
 - `{name} contract` - token contract account
 - `{asset} quantity` - flash loan request amount
 - `{string} memo` - used for outgoing transfer
+- `{set<name>} notifiers` - notify accounts via `callback` action after transfer has been sent
 
 ### Example 1
 
 ```c++
 const asset quantity = asset{10000, symbol{"EOS", 4}};
 flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
-borrow.send( get_self(), extended_asset{ quantity, "eosio.token"_n }, "my memo" );
+borrow.send( get_self(), "eosio.token"_n, quantity, "my memo", set<name>() );
 ```
 
 ### Example 2
 
 ```bash
-$ cleos push action flash.sx borrow '["myaccount", "eosio.token", "1.0000 EOS", "my memo"]' -p myaccount
+$ cleos push action flash.sx borrow '["myaccount", "eosio.token", "1.0000 EOS", "my memo", []]' -p myaccount
 ```
 
 ## ACTION `checkbalance`

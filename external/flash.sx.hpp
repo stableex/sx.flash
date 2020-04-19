@@ -22,23 +22,24 @@ public:
 	 * - `{name} contract` - token contract account
 	 * - `{asset} quantity` - flash loan request amount
 	 * - `{string} memo` - used for outgoing transfer
+	 * - `{set<name>} notifiers` - notify accounts via `callback` action after transfer has been sent
 	 *
 	 * ### Example 1
      *
 	 * ```c++
 	 * const asset quantity = asset{10000, symbol{"EOS", 4}};
 	 * flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
-	 * borrow.send( get_self(), extended_asset{ quantity, "eosio.token"_n }, "my memo" );
+	 * borrow.send( get_self(), "eosio.token"_n, quantity, "my memo", set<name>() );
 	 * ```
 	 *
 	 * ### Example 2
 	 *
 	 * ```bash
-	 * $ cleos push action flash.sx borrow '["myaccount", "eosio.token", "1.0000 EOS", "my memo"]' -p myaccount
+	 * $ cleos push action flash.sx borrow '["myaccount", "eosio.token", "1.0000 EOS", "my memo", []]' -p myaccount
 	 * ```
      */
 	[[eosio::action]]
-	void borrow( const name to, const name contract, const asset quantity, const string memo );
+	void borrow( const name to, const name contract, const asset quantity, const string memo, const set<name> notifiers );
 
 	/**
 	 * ## ACTION `checkbalance`
@@ -77,7 +78,11 @@ public:
 	[[eosio::action]]
 	asset checkbalance( const name account, const name contract, const asset quantity );
 
+	[[eosio::action]]
+	void callback( const name recipient, const name to, const name contract, const asset quantity, const string memo );
+
 	// action wrappers
 	using borrow_action = eosio::action_wrapper<"borrow"_n, &flash::borrow>;
 	using checkbalance_action = eosio::action_wrapper<"checkbalance"_n, &flash::checkbalance>;
+	using callback_action = eosio::action_wrapper<"callback"_n, &flash::callback>;
 };

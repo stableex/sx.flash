@@ -7,24 +7,21 @@
 using namespace eosio;
 using namespace std;
 
-class [[eosio::contract]] basic : public contract {
+class [[eosio::contract]] notifiers : public contract {
 
 public:
 	using contract::contract;
 
 	[[eosio::action]]
-	void myaction( const name contract, const asset quantity, const string memo )
+	void myaction( const name to, const name contract, const asset quantity, const string memo, const set<name> notifiers )
 	{
 		flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
-		borrow.send( get_self(), contract, quantity, memo, set<name>() );
+		borrow.send( to, contract, quantity, memo, notifiers );
 	}
 
-	[[eosio::on_notify("*::transfer")]]
-	void on_transfer( const name from, const name to, asset quantity, const string memo )
+	[[eosio::on_notify("flash.sx::callback")]]
+	void callback( const name recipient, const name to, const name contract, asset quantity, const string memo )
 	{
-		// only handle incoming transfers from flash.sx
-		if ( from != "flash.sx"_n ) return;
-
 		// do actions before sending funds back
 
 		// ==========================
@@ -36,10 +33,10 @@ public:
 		if ( memo == "add" ) quantity.amount += quantity.amount / 2;
 
 		// repay flashloan
-		token::transfer_action transfer( get_first_receiver(), { get_self(), "active"_n });
-		transfer.send( get_self(), from, quantity, memo );
+		token::transfer_action transfer( contract, { get_self(), "active"_n });
+		transfer.send( get_self(), "flash.sx"_n, quantity, memo );
 	}
 
 	// action wrappers
-	using myaction_action = eosio::action_wrapper<"myaction"_n, &basic::myaction>;
+	using myaction_action = eosio::action_wrapper<"myaction"_n, &notifiers::myaction>;
 };
