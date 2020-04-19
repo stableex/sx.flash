@@ -16,39 +16,53 @@
   - Custom logic (trading, arbitrage, etc..)
   - Repay loan at the end of transaction
 
-### Basic Implementation
+**basic.cpp**
 
 ```c++
-#include <flash.sx.hpp>
-
 [[eosio::action]]
-void myaction( const name contract, const asset quantity, const string memo )
+void init( const asset quantity )
 {
 	flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
-	borrow.send( get_self(), contract, quantity, memo );
+	borrow.send( get_self(), "eosio.token"_n, quantity, "", set<name>() );
 }
 
 [[eosio::on_notify("*::transfer")]]
 void on_transfer( const name from, const name to, asset quantity, const string memo )
 {
-	// only handle incoming transfers from flash.sx
+	// only handle incoming transfers from contract
 	if ( from != "flash.sx"_n ) return;
 
 	// do actions before sending funds back
-
-	// ==========================
 	// PLACE YOUR CODE HERE
-	//
-	// EXAMPLE CODE - add & minus
-	// ==========================
-	if ( memo == "minus" ) quantity.amount -= quantity.amount / 2;
-	if ( memo == "add" ) quantity.amount += quantity.amount / 2;
 
 	// repay flashloan
 	token::transfer_action transfer( get_first_receiver(), { get_self(), "active"_n });
 	transfer.send( get_self(), from, quantity, memo );
 }
 ```
+
+**notifiers.cpp**
+
+```c++
+[[eosio::action]]
+void init( const name to, const asset quantity, const set<name> notifiers )
+{
+	flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
+	borrow.send( to, "eosio.token"_n, quantity, "", notifiers );
+}
+
+[[eosio::on_notify("flash.sx::callback")]]
+void callback( const name recipient, const name to, const name contract, asset quantity, const string memo )
+{
+	// do actions before sending funds back
+	// PLACE YOUR CODE HERE
+
+	// repay flashloan
+	token::transfer_action transfer( contract, { get_self(), "active"_n });
+	transfer.send( get_self(), "flash.sx"_n, quantity, memo );
+}
+```
+
 
 ## ACTION `borrow`
 
