@@ -120,7 +120,7 @@ public:
 	 * - `{asset} quantity` - flash loan request amount
 	 * - `{string} memo` - used for outgoing transfer
 	 *
-	 * ### Example 1
+	 * ### Example
      *
 	 * ```c++
 	 * [[eosio::on_notify("flash.sx::callback")]]
@@ -134,6 +134,25 @@ public:
 	[[eosio::action]]
 	void callback( const name recipient, const name to, const name contract, const asset quantity, const string memo );
 
+    /**
+     * ## ACTION `withdraw`
+     *
+     * Account can withdraw available balance from contract
+     *
+     * - **authority**: `account`
+     *
+     * ### params
+     *
+	 * - `{name} account` - account to withdraw from
+	 * - `{name} contract` - token contract account
+	 * - `{asset} quantity` - withdraw amount
+	 *
+	 * ### Example
+     *
+	 * ```bash
+	 * cleos push action flash.sx withdraw '["myaccount", "eosio.token", "1.0000 EOS"]' -p myaccount
+	 * ```
+     */
 	[[eosio::action]]
 	void withdraw( const name account, const name contract, const asset quantity );
 
@@ -144,6 +163,7 @@ public:
 	using borrow_action = eosio::action_wrapper<"borrow"_n, &flash::borrow>;
 	using checkbalance_action = eosio::action_wrapper<"checkbalance"_n, &flash::checkbalance>;
 	using callback_action = eosio::action_wrapper<"callback"_n, &flash::callback>;
+	using withdraw_action = eosio::action_wrapper<"withdraw"_n, &flash::withdraw>;
 
 private:
 	void sub_balance( const name account, const name contract, const asset quantity );

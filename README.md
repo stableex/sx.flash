@@ -113,6 +113,24 @@ void callback( const name recipient, const name to, const name contract, asset q
 }
 ```
 
+## ACTION `withdraw`
+
+Account can withdraw available balance from contract
+
+- **authority**: `account`
+
+### params
+
+- `{name} account` - account to withdraw from
+- `{name} contract` - token contract account
+- `{asset} quantity` - withdraw amount
+
+### Example
+
+```bash
+cleos push action flash.sx withdraw '["myaccount", "eosio.token", "1.0000 EOS"]' -p myaccount
+```
+
 ## Build
 
 ```bash
