@@ -24,8 +24,8 @@
 
 ## Examples
 
-- [**basic.cpp**](/examples/basic.sx.cpp)
-- [**callback.cpp**](/examples/callback.sx.cpp)
+- [**basic.cpp**](/examples/basic.sx.cpp) ([example transaction](https://eosq.app/tx/10f95b6c3927a2d506bad403499a415cb471cb515d52aac8914d5e1b2f3c957a))
+- [**callback.cpp**](/examples/callback.sx.cpp) ([example transaction](https://eosq.app/tx/e93c55af119abb8f90c4adf7a00a05fca8072c41483615d0df7e33a6f53d8e3f))
 
 ## ACTION `borrow`
 
