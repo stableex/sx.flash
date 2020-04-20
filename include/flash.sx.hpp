@@ -137,7 +137,7 @@ public:
     /**
      * ## ACTION `withdraw`
      *
-     * Account can withdraw available balance from contract
+     * Allows account to withdraw available balance from contract.
      *
      * - **authority**: `account`
      *
