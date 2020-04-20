@@ -9,6 +9,33 @@ class [[eosio::contract("flash.sx")]] flash : public contract {
 public:
 	using contract::contract;
 
+	/**
+	 * ## TABLE `balances`
+	 *
+	 * - scope: `contract`
+	 *
+	 * ### params
+	 *
+	 * - `{name} account` - account balance holder
+	 * - `{map<name, asset>} balances` - accounts of balances
+	 *
+	 * ### example
+	 *
+	 * ```json
+	 * {
+	 *   "account": "myaccount",
+	 *   "balances": ??
+	 * }
+	 * ```
+	 */
+	struct [[eosio::table("balances"), eosio::contract("flash.sx")]] balances_row {
+		name                	 	account;
+		map<symbol_code, asset>    	balances;
+
+		uint64_t primary_key() const { return account.value; }
+	};
+	typedef eosio::multi_index< "balances"_n, balances_row> balances_table;
+
     /**
      * ## ACTION `borrow`
      *
@@ -107,8 +134,18 @@ public:
 	[[eosio::action]]
 	void callback( const name recipient, const name to, const name contract, const asset quantity, const string memo );
 
+	[[eosio::action]]
+	void withdraw( const name account, const name contract, const asset quantity );
+
+	[[eosio::on_notify("*::transfer")]]
+	void on_transfer( const name from, const name to, asset quantity, const string memo );
+
 	// action wrappers
 	using borrow_action = eosio::action_wrapper<"borrow"_n, &flash::borrow>;
 	using checkbalance_action = eosio::action_wrapper<"checkbalance"_n, &flash::checkbalance>;
 	using callback_action = eosio::action_wrapper<"callback"_n, &flash::callback>;
+
+private:
+	void sub_balance( const name account, const name contract, const asset quantity );
+	void add_balance( const name account, const name contract, const asset quantity, const name ram_payer );
 };

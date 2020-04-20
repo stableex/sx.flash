@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 mkdir -p dist
+cleos wallet unlock --password $(cat ~/eosio-wallet/.pass)
 
 # deploy smart contract
 cleos set contract flash.sx ./dist flash.sx.wasm flash.sx.abi
