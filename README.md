@@ -1,6 +1,6 @@
 # SX `Flashloans` ⚡️ - EOSIO Smart Contract
 
-> Borrow any amount of liquidity instantly for $0 fees & $0 collateral required.
+> Borrow any amount of liquidity instantly for zero fees & no collateral.
 
 ## Table of Content
 
