@@ -14,13 +14,13 @@
 ## Concept
 
 1. account calls `borrow` action from `flash.sx` with a desired `quantity`.
-  - contract gets **initial** balance of asset.
-  - contract sends quantity `to` account.
+    - contract gets **initial** balance of asset.
+    - contract sends quantity `to` account.
 2. account recieves notifications via `on_notify` and/or `callback` of incoming transfer.
-  - account is free to use received quantity for any purposes.
-  - account returns loan back to contract.
+    - account is free to use received quantity for any purposes.
+    - account returns loan back to contract.
 3. contract gets **final** balance of asset
-  - contract throws an error if **initial** balance is lower than **final** balance.
+    - contract throws an error if **initial** balance is lower than **final** balance.
 
 ## Examples
 
