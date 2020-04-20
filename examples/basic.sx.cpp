@@ -7,7 +7,7 @@
 using namespace eosio;
 using namespace std;
 
-class [[eosio::contract]] basic : public contract {
+class [[eosio::contract("basic.sx")]] example : public contract {
 
 public:
 	using contract::contract;

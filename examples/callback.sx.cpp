@@ -7,16 +7,16 @@
 using namespace eosio;
 using namespace std;
 
-class [[eosio::contract]] notifiers : public contract {
+class [[eosio::contract("callback.sx")]] example : public contract {
 
 public:
 	using contract::contract;
 
 	[[eosio::action]]
-	void init( const name to, const asset quantity, const set<name> notifiers )
+	void init( const name to, const asset quantity )
 	{
 		flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
-		borrow.send( to, "eosio.token"_n, quantity, "", notifiers );
+		borrow.send( to, "eosio.token"_n, quantity, "", set<name>{ get_self() } );
 	}
 
 	[[eosio::on_notify("flash.sx::callback")]]
@@ -27,6 +27,6 @@ public:
 
 		// repay flashloan
 		token::transfer_action transfer( contract, { get_self(), "active"_n });
-		transfer.send( get_self(), "flash.sx"_n, quantity, memo );
+		transfer.send( to, "flash.sx"_n, quantity, memo );
 	}
 };
