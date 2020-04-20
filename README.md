@@ -4,65 +4,28 @@
 
 ## Table of Content
 
-- [`quickstart`](#quickstart)
+- [`concept`](#concept)
+- [`examples`](#examples)
 - [`borrow`](#action-borrow)
 - [`checkbalance`](#action-checkbalance)
+- [`callback`](#action-callback)
+- [`withdraw`](#action-withdraw)
 
-## Quickstart
+## Concept
 
-1. import `external/flash.sx.hpp` into your project
-2. use static action `borrow` with parameters (`to`,`contract`,`quantity`, `memo`)
-3. `on_notify` to intercept incoming token transfer from borrowing flashloan
-  - Custom logic (trading, arbitrage, etc..)
-  - Repay loan at the end of transaction
+1. account calls `borrow` action from `flash.sx` with a desired `quantity`.
+  - contract gets **initial** balance of asset.
+  - contract sends quantity `to` account.
+2. account recieves notifications via `on_notify` and/or `callback` of incoming transfer.
+  - account is free to use received quantity for any purposes.
+  - account returns loan back to contract.
+3. contract gets **final** balance of asset
+  - contract throws an error if **initial** balance is lower than **final** balance.
 
-**basic.cpp**
+## Examples
 
-```c++
-[[eosio::action]]
-void init( const asset quantity )
-{
-	flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
-	borrow.send( get_self(), "eosio.token"_n, quantity, "", set<name>() );
-}
-
-[[eosio::on_notify("*::transfer")]]
-void on_transfer( const name from, const name to, asset quantity, const string memo )
-{
-	// only handle incoming transfers from contract
-	if ( from != "flash.sx"_n ) return;
-
-	// do actions before sending funds back
-	// PLACE YOUR CODE HERE
-
-	// repay flashloan
-	token::transfer_action transfer( get_first_receiver(), { get_self(), "active"_n });
-	transfer.send( get_self(), from, quantity, memo );
-}
-```
-
-**notifiers.cpp**
-
-```c++
-[[eosio::action]]
-void init( const name to, const asset quantity, const set<name> notifiers )
-{
-	flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
-	borrow.send( to, "eosio.token"_n, quantity, "", notifiers );
-}
-
-[[eosio::on_notify("flash.sx::callback")]]
-void callback( const name recipient, const name to, const name contract, asset quantity, const string memo )
-{
-	// do actions before sending funds back
-	// PLACE YOUR CODE HERE
-
-	// repay flashloan
-	token::transfer_action transfer( contract, { get_self(), "active"_n });
-	transfer.send( get_self(), "flash.sx"_n, quantity, memo );
-}
-```
-
+- [**basic.cpp**](/examples/basic.cpp)
+- [**notifiers.cpp**](/examples/notifiers.cpp)
 
 ## ACTION `borrow`
 

@@ -19,7 +19,7 @@ public:
 		borrow.send( get_self(), "eosio.token"_n, quantity, "", set<name>() );
 	}
 
-	[[eosio::on_notify("*::transfer")]]
+	[[eosio::on_notify("eosio.token::transfer")]]
 	void on_transfer( const name from, const name to, asset quantity, const string memo )
 	{
 		// only handle incoming transfers from contract
@@ -29,7 +29,7 @@ public:
 		// PLACE YOUR CODE HERE
 
 		// repay flashloan
-		token::transfer_action transfer( get_first_receiver(), { get_self(), "active"_n });
+		token::transfer_action transfer( "eosio.token"_n, { get_self(), "active"_n });
 		transfer.send( get_self(), from, quantity, memo );
 	}
 };
