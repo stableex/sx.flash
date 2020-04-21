@@ -2,7 +2,7 @@
 void flash::withdraw( const name account, const name contract, const asset quantity )
 {
     require_auth( account );
-	sub_balance( account, contract, quantity );
+    sub_balance( account, contract, quantity );
 }
 
 void flash::sub_balance( const name account, const name contract, const asset quantity )
@@ -10,7 +10,7 @@ void flash::sub_balance( const name account, const name contract, const asset qu
     const symbol_code symcode = quantity.symbol.code();
 
     // get user
-	flash::balances_table _balances( get_self(), contract.value );
+    flash::balances_table _balances( get_self(), contract.value );
     const auto from = _balances.find( account.value );
     check( from != _balances.end(), "account has no balances");
 
@@ -33,7 +33,7 @@ void flash::add_balance( const name account, const name contract, const asset qu
 {
     const symbol_code symcode = quantity.symbol.code();
 
-	flash::balances_table _balances( get_self(), contract.value );
+    flash::balances_table _balances( get_self(), contract.value );
     const auto to = _balances.find( account.value );
 
     if ( to == _balances.end() ) {

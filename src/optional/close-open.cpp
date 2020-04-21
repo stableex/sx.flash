@@ -28,10 +28,10 @@ void flash::open( const name account, const name contract, const symbol sym, con
     check( is_account( account ), "account does not exist" );
 
     // verify sym with token supply
-	token::stats _stats( contract, sym.code().raw() );
-	const asset supply = _stats.get( sym.code().raw(), "symbol does not exist" ).supply;
-	check( supply.symbol == sym, "symbol precision mismatch" );
+    token::stats _stats( contract, sym.code().raw() );
+    const asset supply = _stats.get( sym.code().raw(), "symbol does not exist" ).supply;
+    check( supply.symbol == sym, "symbol precision mismatch" );
     check( supply.amount > 0, "supply must be positive");
 
-	add_balance( account, contract, asset{0, sym}, ram_payer );
+    add_balance( account, contract, asset{0, sym}, ram_payer );
 }
