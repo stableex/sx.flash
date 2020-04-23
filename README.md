@@ -1,5 +1,7 @@
 # SX `Flashloans` ⚡️ - EOSIO Smart Contract
 
+🙏Inspired by [EOS Titan](http://eostitan.com) **[flashloans](https://github.com/CryptoMechanics/flashloans)** smart contract design.
+
 > Borrow any amount of liquidity instantly for zero fees & no collateral.
 
 ## Table of Content
