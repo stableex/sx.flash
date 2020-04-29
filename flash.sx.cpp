@@ -8,26 +8,29 @@ void flash::borrow( const name to, const name contract, const asset quantity, co
     check( is_account( to ), to.to_string() + " account does not exists");
     const symbol_code symcode = quantity.symbol.code();
 
+    // static actions
+    flash::callback_action callback( get_self(), { get_self(), "active"_n });
+    flash::checkbalance_action checkbalance( get_self(), { get_self(), "active"_n });
+    token::transfer_action transfer( contract, { get_self(), "active"_n });
+
     // prevent sending transfer if `to` account does not contain any balance
     // prevents exploit from consuming RAM from contract
-    check_open_balance( contract, to, symcode );
+    token::accounts _accounts( contract, to.value );
+    _accounts.get( symcode.raw(), "to account must have open balance" );
 
     // get initial balance of contract
     const asset balance = token::get_balance( contract, get_self(), symcode );
     check( balance.amount >= quantity.amount, "maximum borrow amount is " + balance.to_string() );
 
     // transfer funds to borrower
-    token::transfer_action transfer( contract, { get_self(), "active"_n });
     transfer.send( get_self(), to, quantity, *memo );
 
     // notify recipient accounts after transfer has been sent
     if ( notifier->value ) {
-        check( is_account( *notifier ), notifier->to_string() + " notifier account does not exists");
-        require_recipient( *notifier );
+        callback.send( to, contract, quantity, *memo, *notifier );
     }
 
     // check if balance is above
-    flash::checkbalance_action checkbalance( get_self(), { get_self(), "active"_n });
     checkbalance.send( get_self(), contract, balance );
 }
 
@@ -40,9 +43,11 @@ asset flash::checkbalance( const name account, const name contract, const asset 
     return balance;
 }
 
-void flash::check_open_balance( const name contract, const name owner, const symbol_code symcode )
+[[eosio::action]]
+void flash::callback( const name to, const name contract, const asset quantity, const string memo, const name recipient )
 {
-    token::accounts _accounts( contract, owner.value );
-    const auto itr = _accounts.find( symcode.raw() );
-    check( itr != _accounts.end(), owner.to_string() + " must have an open balance for " + symcode.to_string() );
+    require_auth( get_self() );
+
+    check( is_account( recipient ), recipient.to_string() + " recipient account does not exists");
+    require_recipient( recipient );
 }

@@ -1,13 +1,13 @@
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
 
-#include <flash.sx.hpp>
-#include <eosio.token.hpp>
+#include "../flash.sx.hpp"
+#include "../eosio.token.hpp"
 
 using namespace eosio;
 using namespace std;
 
-class [[eosio::contract("basic.sx")]] example : public contract {
+class [[eosio::contract("basic")]] example : public contract {
 
 public:
 	using contract::contract;
@@ -16,7 +16,7 @@ public:
 	void init( const asset quantity )
 	{
 		flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
-		borrow.send( get_self(), "eosio.token"_n, quantity, "", set<name>() );
+		borrow.send( get_self(), "eosio.token"_n, quantity, "basic example", name{} );
 	}
 
 	[[eosio::on_notify("eosio.token::transfer")]]
