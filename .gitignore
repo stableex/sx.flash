@@ -1,7 +1,7 @@
 dist
 build
-.abi
-.wasm
+*.abi
+*.wasm
 .vscode
 .DS_Store
 eosc-vault.json
