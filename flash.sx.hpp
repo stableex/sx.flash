@@ -22,7 +22,7 @@ public:
      * - `{name} contract` - token contract account
      * - `{asset} quantity` - flash loan request amount
      * - `{string} [memo=""]` - (optional) transfer memo
-     * - `{name} [notify=""]` - (optional) notify accounts after transfer has been sent
+     * - `{name} [notifier=""]` - (optional) notify accounts after transfer has been sent
      *
      * ### Example 1
      *
