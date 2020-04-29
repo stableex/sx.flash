@@ -6,11 +6,11 @@
 
 ## Table of Content
 
-- [`concept`](#concept)
-- [`examples`](#examples)
-- [`build`](#build)
-- [`borrow`](#action-borrow)
-- [`checkbalance`](#action-checkbalance)
+- [Concept](#concept)
+- [Examples](#examples)
+- [Build](#build)
+- [ACTION `borrow`](#action-borrow)
+- [ACTION `checkbalance`](#action-checkbalance)
 
 ## Concept
 
