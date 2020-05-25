@@ -63,9 +63,38 @@ borrow.send( get_self(), "eosio.token"_n, quantity, "my memo", "notifyme" );
 $ cleos push action flash.sx borrow '["myaccount", "eosio.token", "1.0000 EOS", "my memo", "notifyme"]' -p myaccount
 ```
 
+## ACTION `savebalance`
+
+Save existing balance of account
+
+- **authority**: `any`
+
+### params
+
+- `{name} account` - account to save balance from
+- `{name} contract` - token contract account
+- `{symbol_code} symcode` - symbol code
+
+### Example 1
+
+```c++
+const name account = "myaccount"_n;
+const name contract = "eosio.token"_n;
+const symbol_code symcode = symbol_code{"EOS"};
+
+flash::savebalance_action savebalance( "flash.sx"_n, { account, "active"_n });
+savebalance.send( account, contract, symcode );
+```
+
+### Example 2
+
+```bash
+$ cleos push action flash.sx checkbalance '["myaccount", "eosio.token", "EOS"] -p myaccount
+```
+
 ## ACTION `checkbalance`
 
-Throws error if account does not have equal or above desired asset quantity
+Throws error if account does not have equal or above previously saved balance
 
 - **authority**: `any`
 
@@ -73,27 +102,25 @@ Throws error if account does not have equal or above desired asset quantity
 
 - `{name} account` - account to check if minimum balance is available
 - `{name} contract` - token contract account
-- `{asset} quantity` - minimum required balance amount
-
-### returns
-
-- `{asset}` - current balance of account
+- `{symbol_code} symcode` - symbol code
+- `{quantity} [addition=null]` - (optional) additional quantity to saved balance
 
 ### Example 1
 
 ```c++
 const name account = "myaccount"_n;
 const name contract = "eosio.token"_n;
-const asset quantity = asset{10000, symbol{"EOS", 4}};
+const symbol_code symcode = symbol_code{"EOS"};
+const asset addition = asset{0, symbol{"EOS", 4}};
 
 flash::checkbalance_action checkbalance( "flash.sx"_n, { account, "active"_n });
-checkbalance.send( account, contract, quantity );
+checkbalance.send( account, contract, symcode, addition );
 ```
 
 ### Example 2
 
 ```bash
-$ cleos push action flash.sx checkbalance '["myaccount", "eosio.token", "1.0000 EOS"] -p myaccount
+$ cleos push action flash.sx checkbalance '["myaccount", "eosio.token", "EOS", "0.0000 EOS"] -p myaccount
 ```
 
 ## ACTION `callback`

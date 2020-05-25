@@ -32,3 +32,14 @@ icon: https://raw.githubusercontent.com/stableex/sx.flash/master/icons/sx.png#71
 ---
 
 Allows {{recipient}} recipient to receive notification once {{quantity}} transfer is deposited from flashloan.
+
+<h1 class="contract">savebalance</h1>
+
+---
+spec_version: "0.2.0"
+title: savebalance
+summary: 'Save balance of account'
+icon: https://raw.githubusercontent.com/stableex/sx.flash/master/icons/sx.png#716d4470028412d9cf498649dfcc8180d546be43c2811014e202eae5584fe6f8
+---
+
+Save balance of {{account}} of {{contract}}::{{symcode}}.
