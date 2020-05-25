@@ -43,6 +43,7 @@ void flash::savebalance( const name account, const name contract, const symbol_c
     auto itr = _balances.find( account.value );
 
     // get current balance
+    check_open( contract, account, symcode );
     const asset balance = token::get_balance( contract, account, symcode );
 
     // create
@@ -81,6 +82,7 @@ void flash::checkbalance( const name account, const name contract, const symbol_
     }
 
     // get current balance
+    check_open( contract, account, symcode );
     const asset current_balance = token::get_balance( contract, account, symcode );
 
     // check balance of account, if below the desired amount, fail the transaction
