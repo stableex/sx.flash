@@ -102,5 +102,5 @@ void flash::check_open( const name contract, const name account, const symbol_co
 {
     token::accounts _accounts( contract, account.value );
     auto itr = _accounts.find( symcode.raw() );
-    check( itr != _accounts.end(), account.to_string() + " account must have `open` balance" );
+    check( itr != _accounts.end(), account.to_string() + " account must have " + symcode.to_string() + " `open` balance" );
 }
