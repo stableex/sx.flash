@@ -10,6 +10,7 @@
 - [Examples](#examples)
 - [Build](#build)
 - [ACTION `borrow`](#action-borrow)
+- [ACTION `savebalance`](#action-savebalance)
 - [ACTION `checkbalance`](#action-checkbalance)
 - [ACTION `callback`](#action-callback)
 
