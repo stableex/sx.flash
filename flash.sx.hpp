@@ -76,30 +76,27 @@ public:
      * ### params
      *
      * - `{name} account` - account to check if minimum balance is available
-     * - `{name} contract` - token contract account
-     * - `{symbol_code} symcode` - symbol code
-     * - `{quantity} [addition=null]` - (optional) additional quantity to saved balance
+     * - `{map<symbol_code, name>} symcodes` - map of symbol code & contract names (ex: [ symbol_code{"EOS"}, "eosio.token"_n ] )
      *
      * ### Example 1
      *
      * ```c++
      * const name account = "myaccount"_n;
-     * const name contract = "eosio.token"_n;
-     * const symbol_code symcode = symbol_code{"EOS"};
-     * const asset addition = asset{0, symbol{"EOS", 4}};
+     * map<symbol_code, name> symcodes;
+     * symcodes[symbol_code{"EOS"}] = "eosio.token"_n;
      *
      * flash::checkbalance_action checkbalance( "flash.sx"_n, { account, "active"_n });
-     * checkbalance.send( account, contract, symcode, addition );
+     * checkbalance.send( account, symcodes );
      * ```
      *
      * ### Example 2
      *
      * ```bash
-     * $ cleos push action flash.sx checkbalance '["myaccount", "eosio.token", "EOS", "0.0000 EOS"] -p myaccount
+     * $ cleos push action flash.sx checkbalance '["myaccount", [{"key": "EOS", "value": "eosio.token"}]]' -p myaccount
      * ```
      */
     [[eosio::action]]
-    void checkbalance( const name account, const name contract, const symbol_code symcode, const optional<asset> addition );
+    void checkbalance( const name account, const map<symbol_code, name> symcodes );
 
     /**
      * ## ACTION `savebalance`
@@ -111,28 +108,27 @@ public:
      * ### params
      *
      * - `{name} account` - account to save balance from
-     * - `{name} contract` - token contract account
-     * - `{symbol_code} symcode` - symbol code
+     * - `{map<symbol_code, name>} symcodes` - map of symbol code & contract names (ex: [ symbol_code{"EOS"}, "eosio.token"_n ] )
      *
      * ### Example 1
      *
      * ```c++
      * const name account = "myaccount"_n;
-     * const name contract = "eosio.token"_n;
-     * const symbol_code symcode = symbol_code{"EOS"};
+     * map<symbol_code, name> symcodes;
+     * symcodes[symbol_code{"EOS"}] = "eosio.token"_n;
      *
      * flash::savebalance_action savebalance( "flash.sx"_n, { account, "active"_n });
-     * savebalance.send( account, contract, symcode );
+     * savebalance.send( account, symcodes );
      * ```
      *
      * ### Example 2
      *
      * ```bash
-     * $ cleos push action flash.sx checkbalance '["myaccount", "eosio.token", "EOS"] -p myaccount
+     * $ cleos push action flash.sx savebalance '["myaccount", [{"key": "EOS", "value": "eosio.token"}]] -p myaccount
      * ```
      */
     [[eosio::action]]
-    void savebalance( const name account, const name contract, const symbol_code symcode );
+    void savebalance( const name account, const map<symbol_code, name> symcodes );
 
     /**
      * ## ACTION `callback`
@@ -147,13 +143,13 @@ public:
      * - `{name} contract` - token contract account
      * - `{asset} quantity` - flash loan request amount
      * - `{string} memo` - used for outgoing transfer
-     * - `{name} recipient` - callback recipient
+     * - `{name} notifier` - callback notifier account
      *
      * ### Example
      *
      * ```c++
      * [[eosio::on_notify("flash.sx::callback")]]
-     * void callback( const name to, const name contract, asset quantity, const string memo, const name recipient )
+     * void callback( const name to, const name contract, asset quantity, const string memo, const name notifier )
      * {
      *     token::transfer_action transfer( contract, { get_self(), "active"_n });
      * 	   transfer.send( get_self(), "flash.sx"_n, quantity, memo );
@@ -161,7 +157,7 @@ public:
      * ```
      */
     [[eosio::action]]
-    void callback( const name to, const name contract, const asset quantity, const string memo, const name recipient );
+    void callback( const name to, const name contract, const asset quantity, const string memo, const name notifier );
 
     // action wrappers
     using borrow_action = eosio::action_wrapper<"borrow"_n, &flash::borrow>;

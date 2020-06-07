@@ -5,3 +5,5 @@ build
 .vscode
 .DS_Store
 eosc-vault.json
+nodeos
+stderr

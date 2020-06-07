@@ -1,8 +1,9 @@
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
 
+#include <eosio.token/eosio.token.hpp>
+
 #include "../flash.sx.hpp"
-#include "../eosio.token.hpp"
 
 using namespace eosio;
 using namespace std;
