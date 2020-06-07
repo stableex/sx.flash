@@ -67,6 +67,38 @@ public:
     void borrow( const name to, const name contract, const asset quantity, const optional<string> memo, const optional<name> notifier );
 
     /**
+     * ## ACTION `savebalance`
+     *
+     * Save existing balance of account
+     *
+     * - **authority**: `any`
+     *
+     * ### params
+     *
+     * - `{name} account` - account to save balance from
+     * - `{map<symbol_code, name>} symcodes` - map of symbol code & contract names (ex: [ symbol_code{"EOS"}, "eosio.token"_n ] )
+     *
+     * ### Example 1
+     *
+     * ```c++
+     * const name account = "myaccount"_n;
+     * map<symbol_code, name> symcodes;
+     * symcodes[symbol_code{"EOS"}] = "eosio.token"_n;
+     *
+     * flash::savebalance_action savebalance( "flash.sx"_n, { account, "active"_n });
+     * savebalance.send( account, symcodes );
+     * ```
+     *
+     * ### Example 2
+     *
+     * ```bash
+     * $ cleos push action flash.sx savebalance '["myaccount", [{"key": "EOS", "value": "eosio.token"}]]' -p myaccount
+     * ```
+     */
+    [[eosio::action]]
+    void savebalance( const name account, const map<symbol_code, name> symcodes );
+
+    /**
      * ## ACTION `checkbalance`
      *
      * Throws error if account does not have equal or above previously saved balance
@@ -97,38 +129,6 @@ public:
      */
     [[eosio::action]]
     void checkbalance( const name account, const map<symbol_code, name> symcodes );
-
-    /**
-     * ## ACTION `savebalance`
-     *
-     * Save existing balance of account
-     *
-     * - **authority**: `any`
-     *
-     * ### params
-     *
-     * - `{name} account` - account to save balance from
-     * - `{map<symbol_code, name>} symcodes` - map of symbol code & contract names (ex: [ symbol_code{"EOS"}, "eosio.token"_n ] )
-     *
-     * ### Example 1
-     *
-     * ```c++
-     * const name account = "myaccount"_n;
-     * map<symbol_code, name> symcodes;
-     * symcodes[symbol_code{"EOS"}] = "eosio.token"_n;
-     *
-     * flash::savebalance_action savebalance( "flash.sx"_n, { account, "active"_n });
-     * savebalance.send( account, symcodes );
-     * ```
-     *
-     * ### Example 2
-     *
-     * ```bash
-     * $ cleos push action flash.sx savebalance '["myaccount", [{"key": "EOS", "value": "eosio.token"}]] -p myaccount
-     * ```
-     */
-    [[eosio::action]]
-    void savebalance( const name account, const map<symbol_code, name> symcodes );
 
     /**
      * ## ACTION `callback`

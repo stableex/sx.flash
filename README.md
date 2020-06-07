@@ -73,35 +73,6 @@ Save existing balance of account
 ### params
 
 - `{name} account` - account to save balance from
-- `{name} contract` - token contract account
-- `{symbol_code} symcode` - symbol code
-
-### Example 1
-
-```c++
-const name account = "myaccount"_n;
-const name contract = "eosio.token"_n;
-const symbol_code symcode = symbol_code{"EOS"};
-
-flash::savebalance_action savebalance( "flash.sx"_n, { account, "active"_n });
-savebalance.send( account, contract, symcode );
-```
-
-### Example 2
-
-```bash
-$ cleos push action flash.sx checkbalance '["myaccount", "eosio.token", "EOS"] -p myaccount
-```
-
-## ACTION `savebalance`
-
-Save existing balance of account
-
-- **authority**: `any`
-
-### params
-
-- `{name} account` - account to save balance from
 - `{map<symbol_code, name>} symcodes` - map of symbol code & contract names (ex: [ symbol_code{"EOS"}, "eosio.token"_n ] )
 
 ### Example 1
@@ -118,7 +89,7 @@ savebalance.send( account, symcodes );
 ### Example 2
 
 ```bash
-$ cleos push action flash.sx savebalance '["myaccount", [{"key": "EOS", "value": "eosio.token"}]] -p myaccount
+$ cleos push action flash.sx savebalance '["myaccount", [{"key": "EOS", "value": "eosio.token"}]]' -p myaccount
 ```
 
 ## ACTION `checkbalance`
