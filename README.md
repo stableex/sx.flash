@@ -33,7 +33,7 @@
 ## Build
 
 ```bash
-$ eosio-cpp flash.sx.cpp -o flash.sx.wasm
+$ eosio-cpp flash.sx.cpp -I include
 ```
 
 ## ACTION `borrow`

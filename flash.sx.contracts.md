@@ -4,7 +4,7 @@
 spec_version: "0.2.0"
 title: borrow
 summary: 'Borrow from flashloan provider'
-icon: https://raw.githubusercontent.com/stableex/sx.flash/master/icons/sx.png#716d4470028412d9cf498649dfcc8180d546be43c2811014e202eae5584fe6f8
+icon: https://avatars1.githubusercontent.com/u/60660770#d6a1df4bbf2942f23c3a4485eb9942cb37c5348945e84be8c53e2ef9254ed8da
 ---
 
 Flashloan borrower {{to}} agrees to repay {{contract}}@{{quantity}} within the same transaction timeframe.
@@ -17,7 +17,7 @@ The borrow transfer action will be using {{memo}} memo and notify {{notifier}} a
 spec_version: "0.2.0"
 title: checkbalance
 summary: 'Check account balance if lower than quantity'
-icon: https://raw.githubusercontent.com/stableex/sx.flash/master/icons/sx.png#716d4470028412d9cf498649dfcc8180d546be43c2811014e202eae5584fe6f8
+icon: https://avatars1.githubusercontent.com/u/60660770#d6a1df4bbf2942f23c3a4485eb9942cb37c5348945e84be8c53e2ef9254ed8da
 ---
 
 Throws error if {{account}} as a balance of lower than {{contract}}@{{quantity}}.
@@ -28,7 +28,7 @@ Throws error if {{account}} as a balance of lower than {{contract}}@{{quantity}}
 spec_version: "0.2.0"
 title: callback
 summary: 'Notifies recipient from flashloan'
-icon: https://raw.githubusercontent.com/stableex/sx.flash/master/icons/sx.png#716d4470028412d9cf498649dfcc8180d546be43c2811014e202eae5584fe6f8
+icon: https://avatars1.githubusercontent.com/u/60660770#d6a1df4bbf2942f23c3a4485eb9942cb37c5348945e84be8c53e2ef9254ed8da
 ---
 
 Allows {{recipient}} recipient to receive notification once {{quantity}} transfer is deposited from flashloan.
@@ -39,7 +39,7 @@ Allows {{recipient}} recipient to receive notification once {{quantity}} transfe
 spec_version: "0.2.0"
 title: savebalance
 summary: 'Save balance of account'
-icon: https://raw.githubusercontent.com/stableex/sx.flash/master/icons/sx.png#716d4470028412d9cf498649dfcc8180d546be43c2811014e202eae5584fe6f8
+icon: https://avatars1.githubusercontent.com/u/60660770#d6a1df4bbf2942f23c3a4485eb9942cb37c5348945e84be8c53e2ef9254ed8da
 ---
 
 Save balance of {{account}} of {{contract}}::{{symcode}}.
