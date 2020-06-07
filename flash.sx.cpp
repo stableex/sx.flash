@@ -1,5 +1,5 @@
+#include <eosio.token/eosio.token.hpp>
 #include "flash.sx.hpp"
-#include "eosio.token.hpp"
 
 [[eosio::action]]
 void flash::borrow( const name to, const name contract, const asset quantity, const optional<string> memo, const optional<name> notifier )
