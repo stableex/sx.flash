@@ -167,4 +167,5 @@ public:
 
 private:
     void check_open( const name contract, const name account, const symbol_code symcode );
+    void save_balance( const name account, const map<symbol_code, name> symcodes );
 };

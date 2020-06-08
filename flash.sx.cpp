@@ -33,13 +33,22 @@ void flash::borrow( const name to, const name contract, const asset quantity, co
     // save & check if balance is above
     map<symbol_code, name> symcodes;
     symcodes[ symcode ] = contract;
-    savebalance( get_self(), symcodes );
+    save_balance( get_self(), symcodes );
     checkbalance.send( get_self(), symcodes );
 }
 
 [[eosio::action]]
 void flash::savebalance( const name account, const map<symbol_code, name> symcodes )
 {
+    require_auth( account );
+    save_balance( account, symcodes );
+}
+
+void flash::save_balance( const name account, const map<symbol_code, name> symcodes )
+{
+    check( is_account( account ), "account does not exists");
+    check( symcodes.size(), "symcodes is empty");
+
     // table
     balances_table _balances( get_self(), get_self().value );
     auto itr = _balances.find( account.value );
@@ -71,9 +80,14 @@ void flash::savebalance( const name account, const map<symbol_code, name> symcod
 [[eosio::action]]
 void flash::checkbalance( const name account, const map<symbol_code, name> symcodes )
 {
+    check( is_account( account ), "account does not exists");
+    check( symcodes.size(), "symcodes is empty");
+
     // fetch previously saved balance
     balances_table _balances( get_self(), get_self().value );
-    const map<symbol_code, extended_asset> balances = _balances.get( account.value, "[account] not found, must first execute `savebalance`" ).balances;
+    const auto itr = _balances.find( account.value );
+    check( itr != _balances.end(), "[account] not found, must first execute `savebalance`");
+    const map<symbol_code, extended_asset> balances = itr->balances;
 
     // unpack map object
     for ( const auto row : symcodes ) {
