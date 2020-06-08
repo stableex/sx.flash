@@ -52,8 +52,10 @@ void flash::save_balance( const name account, const map<symbol_code, name> symco
     // table
     balances_table _balances( get_self(), get_self().value );
     auto itr = _balances.find( account.value );
+    check( itr == _balances.end(), "balance already exists, must now use `checkbalance`");
 
     // unpack map object
+    map<symbol_code, extended_asset> balances;
     for ( const auto row : symcodes ) {
         const symbol_code symcode = row.first;
         const name contract = row.second;
@@ -61,20 +63,15 @@ void flash::save_balance( const name account, const map<symbol_code, name> symco
         // get current balance
         check_open( contract, account, symcode );
         const asset balance = token::get_balance( contract, account, symcode );
-
-        // create
-        if ( itr == _balances.end() ) {
-            _balances.emplace( get_self(), [&]( auto& row ) {
-                row.account = account;
-                row.balances[symcode] = extended_asset{ balance, contract };
-            });
-        // modify
-        } else {
-            _balances.modify( itr, get_self(), [&]( auto& row ) {
-                row.balances[symcode] = extended_asset{ balance, contract };
-            });
-        }
+        balances[symcode] = extended_asset{ balance, contract };
     }
+
+    // save user balances
+    // can only be created once (to prevent double entry attacks)
+    _balances.emplace( get_self(), [&]( auto& row ) {
+        row.account = account;
+        row.balances = balances;
+    });
 }
 
 [[eosio::action]]
@@ -109,6 +106,8 @@ void flash::checkbalance( const name account, const map<symbol_code, name> symco
         // check balance of account, if below the desired amount, fail the transaction
         check( current_balance >= balance, account.to_string() + " must have a balance equal or above " + balance.to_string() );
     }
+    // delete balances once check is completed (to prevent double entry attacks)
+    _balances.erase( itr );
 }
 
 [[eosio::action]]
