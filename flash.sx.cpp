@@ -31,20 +31,20 @@ void flash::borrow( const name to, const name contract, const asset quantity, co
     }
 
     // save & check if balance is above
-    map<symbol_code, name> symcodes;
-    symcodes[ symcode ] = contract;
+    vector<extended_symbol> symcodes;
+    symcodes.push_back(extended_symbol{ symbol{symcode, 0}, contract });
     save_balance( get_self(), symcodes );
     checkbalance.send( get_self(), symcodes );
 }
 
 [[eosio::action]]
-void flash::savebalance( const name account, const map<symbol_code, name> symcodes )
+void flash::savebalance( const name account, const vector<extended_symbol> symcodes )
 {
     require_auth( account );
     save_balance( account, symcodes );
 }
 
-void flash::save_balance( const name account, const map<symbol_code, name> symcodes )
+void flash::save_balance( const name account, const vector<extended_symbol> symcodes )
 {
     check( is_account( account ), "account does not exists");
     check( symcodes.size(), "symcodes is empty");
@@ -55,15 +55,17 @@ void flash::save_balance( const name account, const map<symbol_code, name> symco
     check( itr == _balances.end(), "balance already exists, must now use `checkbalance`");
 
     // unpack map object
-    map<symbol_code, extended_asset> balances;
+    map<uint64_t, extended_asset> balances;
     for ( const auto row : symcodes ) {
-        const symbol_code symcode = row.first;
-        const name contract = row.second;
+        const symbol_code symcode = row.get_symbol().code();
+        const name contract = row.get_contract();
+        const uint64_t id = symcode.raw() + contract.value;
+        check( balances.find( id ) == balances.end(), "balance id already exists");
 
         // get current balance
         check_open( contract, account, symcode );
         const asset balance = token::get_balance( contract, account, symcode );
-        balances[symcode] = extended_asset{ balance, contract };
+        balances[id] = extended_asset{ balance, contract };
     }
 
     // save user balances
@@ -75,7 +77,7 @@ void flash::save_balance( const name account, const map<symbol_code, name> symco
 }
 
 [[eosio::action]]
-void flash::checkbalance( const name account, const map<symbol_code, name> symcodes )
+void flash::checkbalance( const name account, const vector<extended_symbol> symcodes )
 {
     check( is_account( account ), "account does not exists");
     check( symcodes.size(), "symcodes is empty");
@@ -84,19 +86,20 @@ void flash::checkbalance( const name account, const map<symbol_code, name> symco
     balances_table _balances( get_self(), get_self().value );
     const auto itr = _balances.find( account.value );
     check( itr != _balances.end(), "[account] not found, must first execute `savebalance`");
-    const map<symbol_code, extended_asset> balances = itr->balances;
+    const map<uint64_t, extended_asset> balances = itr->balances;
 
     // unpack map object
     for ( const auto row : symcodes ) {
-        const symbol_code symcode = row.first;
-        const name contract = row.second;
+        const symbol_code symcode = row.get_symbol().code();
+        const name contract = row.get_contract();
+        const uint64_t id = symcode.raw() + contract.value;
 
         // get previously saved balance
-        const extended_asset ext_balance = balances.at(symcode);
+        const extended_asset ext_balance = balances.at(id);
         const asset balance = ext_balance.quantity;
 
         // validate balance
-        check( balance.is_valid(), "[symcode] not found, must first execute `savebalance`");
+        check( balance.is_valid(), "[symcode] + [contract] not found, must first execute `savebalance`");
         check( ext_balance.contract == contract, "[contract] does not match account balance contract");
 
         // get current balance

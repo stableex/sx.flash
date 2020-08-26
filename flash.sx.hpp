@@ -13,7 +13,7 @@ public:
      * ## TABLE `balances`
      *
      * - `{name} account` - account name
-     * - `{map<symbol_code, extended_asset>} balances` - balances
+     * - `{map<uint64_t, extended_asset>} balances` - balances
      *
      * ### example
      *
@@ -21,14 +21,14 @@ public:
      * {
      *     "account": "myaccount",
      *     "balances": [
-     *         { "key": "EOS", "value": {"contract": "eosio.token", "quantity": "1.0000 EOS" } }
+     *         { "key": 123, "value": {"contract": "eosio.token", "quantity": "1.0000 EOS" } }
      *     ]
      * }
      * ```
      */
     struct [[eosio::table("balances")]] balances_row {
         name                                account;
-        map<symbol_code, extended_asset>    balances;
+        map<uint64_t, extended_asset>       balances;
 
         uint64_t primary_key() const { return account.value; }
     };
@@ -96,7 +96,7 @@ public:
      * ```
      */
     [[eosio::action]]
-    void savebalance( const name account, const map<symbol_code, name> symcodes );
+    void savebalance( const name account, const vector<extended_symbol> symcodes );
 
     /**
      * ## ACTION `checkbalance`
@@ -128,7 +128,7 @@ public:
      * ```
      */
     [[eosio::action]]
-    void checkbalance( const name account, const map<symbol_code, name> symcodes );
+    void checkbalance( const name account, const vector<extended_symbol> symcodes );
 
     /**
      * ## ACTION `callback`
@@ -167,5 +167,5 @@ public:
 
 private:
     void check_open( const name contract, const name account, const symbol_code symcode );
-    void save_balance( const name account, const map<symbol_code, name> symcodes );
+    void save_balance( const name account, const vector<extended_symbol> symcodes );
 };
