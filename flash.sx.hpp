@@ -12,25 +12,23 @@ public:
     /**
      * ## TABLE `balances`
      *
-     * - `{name} account` - account name
-     * - `{map<uint64_t, extended_asset>} balances` - balances
+     * - `{name} contract` - contract name
+     * - `{asset} balance` - balance amount
      *
      * ### example
      *
      * ```json
      * {
-     *     "account": "myaccount",
-     *     "balances": [
-     *         { "key": 123, "value": {"contract": "eosio.token", "quantity": "1.0000 EOS" } }
-     *     ]
+     *     "contract": "eosio.token",
+     *     "balance": "1.0000 EOS"
      * }
      * ```
      */
     struct [[eosio::table("balances")]] balances_row {
-        name                                account;
-        map<uint64_t, extended_asset>       balances;
+        name        contract;
+        asset       balance;
 
-        uint64_t primary_key() const { return account.value; }
+        uint64_t primary_key() const { return contract.value; }
     };
     typedef eosio::multi_index< "balances"_n, balances_row > balances_table;
 
@@ -67,68 +65,25 @@ public:
     void borrow( const name to, const name contract, const asset quantity, const optional<string> memo, const optional<name> notifier );
 
     /**
-     * ## ACTION `savebalance`
-     *
-     * Save existing balance of account
-     *
-     * - **authority**: `any`
-     *
-     * ### params
-     *
-     * - `{name} account` - account to save balance from
-     * - `{map<symbol_code, name>} symcodes` - map of symbol code & contract names (ex: [ symbol_code{"EOS"}, "eosio.token"_n ] )
-     *
-     * ### Example 1
-     *
-     * ```c++
-     * const name account = "myaccount"_n;
-     * map<symbol_code, name> symcodes;
-     * symcodes[symbol_code{"EOS"}] = "eosio.token"_n;
-     *
-     * flash::savebalance_action savebalance( "flash.sx"_n, { account, "active"_n });
-     * savebalance.send( account, symcodes );
-     * ```
-     *
-     * ### Example 2
-     *
-     * ```bash
-     * $ cleos push action flash.sx savebalance '["myaccount", [{"key": "EOS", "value": "eosio.token"}]]' -p myaccount
-     * ```
-     */
-    [[eosio::action]]
-    void savebalance( const name account, const vector<extended_symbol> symcodes );
-
-    /**
      * ## ACTION `checkbalance`
      *
-     * Throws error if account does not have equal or above previously saved balance
+     * Throws error if contract does not have equal or above previously saved balance
      *
-     * - **authority**: `any`
+     * - **authority**: `get_self()`
      *
      * ### params
      *
-     * - `{name} account` - account to check if minimum balance is available
-     * - `{map<symbol_code, name>} symcodes` - map of symbol code & contract names (ex: [ symbol_code{"EOS"}, "eosio.token"_n ] )
+     * - `{name} contract` - contract name
+     * - `{symbol_code} symcode` - symbol code
      *
-     * ### Example 1
-     *
-     * ```c++
-     * const name account = "myaccount"_n;
-     * map<symbol_code, name> symcodes;
-     * symcodes[symbol_code{"EOS"}] = "eosio.token"_n;
-     *
-     * flash::checkbalance_action checkbalance( "flash.sx"_n, { account, "active"_n });
-     * checkbalance.send( account, symcodes );
-     * ```
-     *
-     * ### Example 2
+     * ### Example
      *
      * ```bash
-     * $ cleos push action flash.sx checkbalance '["myaccount", [{"key": "EOS", "value": "eosio.token"}]]' -p myaccount
+     * $ cleos push action flash.sx checkbalance '["eosio.token", "EOS"]' -p myaccount
      * ```
      */
     [[eosio::action]]
-    void checkbalance( const name account, const vector<extended_symbol> symcodes );
+    void checkbalance( const name contract, const symbol_code symcode );
 
     /**
      * ## ACTION `callback`
@@ -161,11 +116,10 @@ public:
 
     // action wrappers
     using borrow_action = eosio::action_wrapper<"borrow"_n, &flash::borrow>;
-    using savebalance_action = eosio::action_wrapper<"savebalance"_n, &flash::savebalance>;
-    using checkbalance_action = eosio::action_wrapper<"checkbalance"_n, &flash::checkbalance>;
     using callback_action = eosio::action_wrapper<"callback"_n, &flash::callback>;
+    using checkbalance_action = eosio::action_wrapper<"checkbalance"_n, &flash::checkbalance>;
 
 private:
     void check_open( const name contract, const name account, const symbol_code symcode );
-    void save_balance( const name account, const vector<extended_symbol> symcodes );
+    void save_balance( const name contract, const asset balance );
 };

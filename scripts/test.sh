@@ -6,6 +6,8 @@ cleos push action basic init '["1.0000 EOS"]' -p basic
 # callback
 cleos push action callback init '["myaccount", "1.0000 EOS"]' -p callback
 
-# save & check
-cleos push action flash.sx savebalance '["myaccount", [{"sym": "4,EOS", "contract": "eosio.token"}]]' -p myaccount
-cleos push action flash.sx checkbalance '["myaccount", [{"sym": "4,EOS", "contract": "eosio.token"}]]' -p myaccount
+# FAIL - attempt to borrow without paying back loan
+cleos push action flash.sx borrow '["myaccount", "eosio.token", "1.0000 EOS", "", ""]' -p myaccount
+
+# FAIL - attempt to borrow too much
+cleos push action flash.sx borrow '["myaccount", "eosio.token", "1000.0000 EOS", "", ""]' -p myaccount

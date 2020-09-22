@@ -1,17 +1,12 @@
 # SX `Flashloans` ⚡️ - EOSIO Smart Contract
 
-🙏Inspired by [EOS Titan](http://eostitan.com) **[flashloans](https://github.com/CryptoMechanics/flashloans)** smart contract design.
-
 > Borrow any amount of liquidity instantly for zero fees & no collateral.
 
 ## Table of Content
 
 - [Concept](#concept)
 - [Examples](#examples)
-- [Build](#build)
 - [ACTION `borrow`](#action-borrow)
-- [ACTION `savebalance`](#action-savebalance)
-- [ACTION `checkbalance`](#action-checkbalance)
 - [ACTION `callback`](#action-callback)
 
 ## Concept
@@ -25,16 +20,12 @@
 3. contract gets **final** balance of asset
     - contract throws an error if **initial** balance is lower than **final** balance.
 
+🙏 Inspired by [EOS Titan](http://eostitan.com) **[flashloans](https://github.com/CryptoMechanics/flashloans)** smart contract design.
+
 ## Examples
 
 - [**basic.cpp**](/examples/basic.sx.cpp) ([example transaction](https://eosq.app/tx/6cf07056153122ea994770ff1205adf10b23597cdeee9f85d34e844e4ede8f4e))
 - [**callback.cpp**](/examples/callback.sx.cpp) ([example transaction](https://eosq.app/tx/8c4e0186ed34af344d30b89b55f3e2a93fdef26fde9f9675e33e3ce0fbaf58cc))
-
-## Build
-
-```bash
-$ eosio-cpp flash.sx.cpp -I include
-```
 
 ## ACTION `borrow`
 
@@ -62,62 +53,6 @@ borrow.send( get_self(), "eosio.token"_n, quantity, "my memo", "notifyme" );
 
 ```bash
 $ cleos push action flash.sx borrow '["myaccount", "eosio.token", "1.0000 EOS", "my memo", "notifyme"]' -p myaccount
-```
-
-## ACTION `savebalance`
-
-Save existing balance of account
-
-- **authority**: `any`
-
-### params
-
-- `{name} account` - account to save balance from
-- `{map<symbol_code, name>} symcodes` - map of symbol code & contract names (ex: [ symbol_code{"EOS"}, "eosio.token"_n ] )
-
-### Example 1
-
-```c++
-const name account = "myaccount"_n;
-map<symbol_code, name> symcodes;
-symcodes[symbol_code{"EOS"}] = "eosio.token"_n;
-
-flash::savebalance_action savebalance( "flash.sx"_n, { account, "active"_n });
-savebalance.send( account, symcodes );
-```
-
-### Example 2
-
-```bash
-$ cleos push action flash.sx savebalance '["myaccount", [{"key": "EOS", "value": "eosio.token"}]]' -p myaccount
-```
-
-## ACTION `checkbalance`
-
-Throws error if account does not have equal or above previously saved balance
-
-- **authority**: `any`
-
-### params
-
-- `{name} account` - account to check if minimum balance is available
-- `{map<symbol_code, name>} symcodes` - map of symbol code & contract names (ex: [ symbol_code{"EOS"}, "eosio.token"_n ] )
-
-### Example 1
-
-```c++
-const name account = "myaccount"_n;
-map<symbol_code, name> symcodes;
-symcodes[symbol_code{"EOS"}] = "eosio.token"_n;
-
-flash::checkbalance_action checkbalance( "flash.sx"_n, { account, "active"_n });
-checkbalance.send( account, symcodes );
-```
-
-### Example 2
-
-```bash
-$ cleos push action flash.sx checkbalance '["myaccount", [{"key": "EOS", "value": "eosio.token"}]]' -p myaccount
 ```
 
 ## ACTION `callback`
