@@ -94,6 +94,7 @@ public:
      *
      * ### params
      *
+     * - `{name} from` - sender of flash loan
      * - `{name} to` - receiver of flash loan
      * - `{name} contract` - token contract account
      * - `{asset} quantity` - flash loan request amount
@@ -104,7 +105,7 @@ public:
      *
      * ```c++
      * [[eosio::on_notify("flash.sx::callback")]]
-     * void callback( const name to, const name contract, asset quantity, const string memo, const name notifier )
+     * void callback( const name from, const name to, const name contract, asset quantity, const string memo, const name notifier )
      * {
      *     token::transfer_action transfer( contract, { get_self(), "active"_n });
      * 	   transfer.send( get_self(), "flash.sx"_n, quantity, memo );
@@ -112,7 +113,7 @@ public:
      * ```
      */
     [[eosio::action]]
-    void callback( const name to, const name contract, const asset quantity, const string memo, const name notifier );
+    void callback( const name from, const name to, const name contract, const asset quantity, const string memo, const name notifier );
 
     // action wrappers
     using borrow_action = eosio::action_wrapper<"borrow"_n, &flash::borrow>;

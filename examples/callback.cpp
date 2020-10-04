@@ -21,7 +21,7 @@ public:
 	}
 
 	[[eosio::on_notify("flash.sx::callback")]]
-	void on_callback( const name to, const name contract, asset quantity, const string memo, const name recipient )
+	void on_callback( const name from, const name to, const name contract, asset quantity, const string memo, const name recipient )
 	{
 		// do actions before sending funds back
 		// PLACE YOUR CODE HERE

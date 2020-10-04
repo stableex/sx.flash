@@ -26,7 +26,7 @@ void flash::borrow( const name to, const name contract, const asset quantity, co
     transfer.send( get_self(), to, quantity, *memo );
 
     // 2. notify recipient accounts after transfer has been sent
-    if ( notifier->value ) callback.send( to, contract, quantity, *memo, *notifier );
+    if ( notifier->value ) callback.send( get_self(), to, contract, quantity, *memo, *notifier );
 
     // 3. check if balance is higher than previous
     checkbalance.send( contract, symcode );
@@ -68,7 +68,7 @@ void flash::checkbalance( const name contract, const symbol_code symcode )
 }
 
 [[eosio::action]]
-void flash::callback( const name to, const name contract, const asset quantity, const string memo, const name notifier )
+void flash::callback( const name from, const name to, const name contract, const asset quantity, const string memo, const name notifier )
 {
     require_auth( get_self() );
 
