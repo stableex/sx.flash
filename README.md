@@ -63,6 +63,7 @@ Notifies recipient account via `callback` action after transfer has been sent fr
 
 ### params
 
+- `{name} from` - sender of flash loan
 - `{name} to` - receiver of flash loan
 - `{name} contract` - token contract account
 - `{asset} quantity` - flash loan request amount
@@ -73,7 +74,7 @@ Notifies recipient account via `callback` action after transfer has been sent fr
 
 ```c++
 [[eosio::on_notify("flash.sx::callback")]]
-void callback( const name to, const name contract, asset quantity, const string memo, const name recipient )
+void callback( const name from, const name to, const name contract, asset quantity, const string memo, const name recipient )
 {
     token::transfer_action transfer( contract, { get_self(), "active"_n });
     transfer.send( get_self(), "flash.sx"_n, quantity, memo );
