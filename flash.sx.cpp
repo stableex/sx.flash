@@ -5,7 +5,7 @@
 void flash::borrow( const name to, const name contract, const asset quantity, const optional<string> memo, const optional<name> notifier )
 {
     // no authority required
-    check( is_account( to ), to.to_string() + " account does not exists");
+    check( is_account( to ), get_self().to_string() + ": " + to.to_string() + " account does not exists");
     const symbol_code symcode = quantity.symbol.code();
 
     // static actions
@@ -13,14 +13,15 @@ void flash::borrow( const name to, const name contract, const asset quantity, co
     flash::checkbalance_action checkbalance( get_self(), { get_self(), "active"_n });
     token::transfer_action transfer( contract, { get_self(), "active"_n });
 
+    // get initial balance of contract & save
+    check_open( contract, get_self(), symcode );
+    const asset balance = token::get_balance( contract, get_self(), symcode );
+    check( balance.amount >= quantity.amount, get_self().to_string() + ": maximum borrow amount is " + balance.to_string() );
+    save_balance( contract, balance );
+
     // prevent sending transfer if `to` account does not contain any balance
     // prevents exploit from consuming RAM from contract
     check_open( contract, to, symcode );
-
-    // get initial balance of contract & save
-    const asset balance = token::get_balance( contract, get_self(), symcode );
-    check( balance.amount >= quantity.amount, "maximum borrow amount is " + balance.to_string() );
-    save_balance( contract, balance );
 
     // 1. transfer funds to borrower
     transfer.send( get_self(), to, quantity, *memo );
@@ -37,7 +38,7 @@ void flash::save_balance( const name contract, const asset balance )
     // table
     balances_table _balances( get_self(), get_self().value );
     auto itr = _balances.find( contract.value );
-    check( itr == _balances.end(), "balance already exists, must now use `checkbalance`");
+    check( itr == _balances.end(), get_self().to_string() + ": balance already exists, must now use `checkbalance`");
 
     // save contract balance
     // can only be created once (to prevent double entry attacks)
@@ -55,13 +56,13 @@ void flash::checkbalance( const name contract, const symbol_code symcode )
     // fetch previously saved balance
     balances_table _balances( get_self(), get_self().value );
     const auto itr = _balances.find( contract.value );
-    check( itr != _balances.end(), "must first execute `borrow`");
+    check( itr != _balances.end(), get_self().to_string() + ": must first execute `borrow`");
 
     // get current balance
     const asset balance = token::get_balance( contract, get_self(), symcode );
 
     // check balance of account, if below the desired amount, fail the transaction
-    check( balance >= itr->balance, get_self().to_string() + " must have a balance equal or above " + balance.to_string() );
+    check( balance >= itr->balance, get_self().to_string() + ": borrowed quantity was not repaid before the end of inline action");
 
     // delete balances once check is completed (to prevent double entry attacks)
     _balances.erase( itr );
@@ -72,7 +73,7 @@ void flash::callback( const name from, const name to, const name contract, const
 {
     require_auth( get_self() );
 
-    check( is_account( notifier ), notifier.to_string() + " notifier account does not exists");
+    check( is_account( notifier ), get_self().to_string() + ": " + notifier.to_string() + " notifier account does not exists");
     require_recipient( notifier );
 }
 
@@ -80,5 +81,5 @@ void flash::check_open( const name contract, const name account, const symbol_co
 {
     token::accounts _accounts( contract, account.value );
     auto itr = _accounts.find( symcode.raw() );
-    check( itr != _accounts.end(), account.to_string() + " account must have " + symcode.to_string() + " `open` balance" );
+    check( itr != _accounts.end(), get_self().to_string() + ": " + account.to_string() + " account must have " + symcode.to_string() + " `open` balance" );
 }
