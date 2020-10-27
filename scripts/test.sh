@@ -11,8 +11,8 @@ cleos push action callback init '["myaccount", "1.0000 EOS"]' -p callback
 
 # ERROR - borrow
 echo "❗️ERROR - attempt to borrow without paying back loan"
-cleos push action flash.sx borrow '["myaccount", "eosio.token", "1.0000 EOS", "", ""]' -p myaccount
+cleos push action flash.sx borrow '["myaccount", ["1.0000 EOS", "eosio.token"], "", ""]' -p myaccount
 
 # ERROR - borrow
 echo "❗️ERROR - attempt to borrow too much"
-cleos push action flash.sx borrow '["myaccount", "eosio.token", "1000.0000 EOS", "", ""]' -p myaccount
+cleos push action flash.sx borrow '["myaccount", ["1000.0000 EOS", "eosio.token"], "", ""]' -p myaccount

@@ -17,7 +17,7 @@ public:
 	void init( const asset quantity )
 	{
 		sx::flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
-		borrow.send( get_self(), "eosio.token"_n, quantity, "basic example", name{} );
+		borrow.send( get_self(), extended_asset{quantity, "eosio.token"_n}, "basic example", name{} );
 	}
 
 	[[eosio::on_notify("eosio.token::transfer")]]

@@ -38,9 +38,8 @@ Account requests to borrow quantity
 
 ### params
 
-- `{name} to` - receiver of flash loan
-- `{name} contract` - token contract account
-- `{asset} quantity` - flash loan request amount
+- `{name} receiver` - receiver of flash loan
+- `{extended_asset} amount` - flash loan request amount
 - `{string} [memo=""]` - (optional) transfer memo
 - `{name} [notifier=""]` - (optional) notify accounts after transfer has been sent
 
@@ -48,15 +47,16 @@ Account requests to borrow quantity
 
 ```c++
 const asset quantity = asset{10000, symbol{"EOS", 4}};
+const name contract = "eosio.token"_n;
 
 sx::flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
-borrow.send( get_self(), "eosio.token"_n, quantity, "my memo", "notifyme" );
+borrow.send( get_self(), extended_asset{quantity, contract}, "my memo", "notifyme" );
 ```
 
 ### Example 2
 
 ```bash
-$ cleos push action flash.sx borrow '["myaccount", "eosio.token", "1.0000 EOS", "my memo", "notifyme"]' -p myaccount
+$ cleos push action flash.sx borrow '["myaccount", ["1.0000 EOS", "eosio.token"], "my memo", "notifyme"]' -p myaccount
 ```
 
 ## ACTION `callback`
@@ -67,23 +67,21 @@ Notifies recipient account via `callback` action after transfer has been sent fr
 
 ### params
 
-- `{name} from` - sender of flash loan
-- `{name} to` - receiver of flash loan
-- `{name} contract` - token contract account
-- `{asset} quantity` - flash loan request amount
-- `{string} memo` - used for outgoing transfer
-- `{name} recipient` - callback recipient
+- `{name} code` - flash loan contract
+- `{name} receiver` - receiver of flash loan
+- `{extended_asset} amount` - flash loan request amount
+- `{string} [memo=""]` - used for outgoing transfer
+- `{name} [notifier=""]` - callback notifier account
 
 ### Example
 
 ```c++
 [[eosio::on_notify("flash.sx::callback")]]
-void callback( const name from, const name to, const name contract, asset quantity, const string memo, const name recipient )
+void callback( const name code, const name receiver, const extended_asset amount, const string memo, const name notifier )
 {
-    const asset fee = sx::flash::calculate_fee( "flash.sx"_n, quantity );
-
-    eosio::token::transfer_action transfer( contract, { get_self(), "active"_n });
-    transfer.send( get_self(), "flash.sx"_n, quantity + fee, memo );
+    const asset fee = sx::flash::calculate_fee( code, amount.quantity );
+    eosio::token::transfer_action transfer( amount.contract, { receiver, "active"_n });
+    transfer.send( receiver, code, amount.quantity + fee, memo );
 }
 ```
 

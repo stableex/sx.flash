@@ -3,10 +3,12 @@
 #include "flash.sx.hpp"
 
 [[eosio::action]]
-void sx::flash::borrow( const name to, const name contract, const asset quantity, const optional<string> memo, const optional<name> notifier )
+void sx::flash::borrow( const name receiver, const extended_asset amount, const optional<string> memo, const optional<name> notifier )
 {
     // no authority required
-    check( is_account( to ), get_self().to_string() + ": " + to.to_string() + " account does not exists");
+    check( is_account( receiver ), get_self().to_string() + ": receiver " + receiver.to_string() + " account does not exists");
+    const name contract = amount.contract;
+    const asset quantity = amount.quantity;
     const symbol_code symcode = quantity.symbol.code();
 
     // static actions
@@ -21,15 +23,15 @@ void sx::flash::borrow( const name to, const name contract, const asset quantity
     check( balance - fee >= quantity, get_self().to_string() + ": maximum borrow amount is " + (balance - fee).to_string() );
     save_balance( contract, balance + fee );
 
-    // prevent sending transfer if `to` account does not contain any balance
+    // prevent sending transfer if `receiver` account does not contain any balance
     // prevents exploit from consuming RAM from contract
-    check_open( contract, to, symcode );
+    check_open( contract, receiver, symcode );
 
-    // 1. transfer funds to borrower
-    transfer.send( get_self(), to, quantity, *memo );
+    // 1. transfer funds to receiver
+    transfer.send( get_self(), receiver, quantity, *memo );
 
     // 2. notify recipient accounts after transfer has been sent
-    if ( notifier->value ) callback.send( get_self(), to, contract, quantity, *memo, *notifier );
+    if ( notifier->value ) callback.send( get_self(), receiver, extended_asset{quantity, contract}, *memo, *notifier );
 
     // 3. check if balance is higher than previous
     checkbalance.send( contract, symcode );
@@ -75,7 +77,16 @@ void sx::flash::checkbalance( const name contract, const symbol_code symcode )
 }
 
 [[eosio::action]]
-void sx::flash::callback( const name from, const name to, const name contract, const asset quantity, const string memo, const name notifier )
+void sx::flash::flashlog( const name receiver, const extended_asset amount, const extended_asset fee )
+{
+    require_auth( get_self() );
+
+    if ( is_account("stats.sx"_n )) require_recipient( "stats.sx"_n );
+}
+
+
+[[eosio::action]]
+void sx::flash::callback( const name code, const name receiver, const extended_asset amount, const string memo, const name notifier )
 {
     require_auth( get_self() );
 

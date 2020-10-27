@@ -14,21 +14,21 @@ public:
 	using contract::contract;
 
 	[[eosio::action]]
-	void init( const name to, const asset quantity )
+	void init( const name receiver, const asset quantity )
 	{
 		sx::flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
-		borrow.send( to, "eosio.token"_n, quantity, "callback memo", get_self() );
+		borrow.send( receiver, extended_asset{quantity, "eosio.token"_n}, "callback memo", get_self() );
 	}
 
 	[[eosio::on_notify("flash.sx::callback")]]
-	void on_callback( const name from, const name to, const name contract, asset quantity, const string memo, const name recipient )
+	void on_callback( const name code, const name receiver, const extended_asset amount, const string memo, const name recipient )
 	{
 		// do actions before sending funds back
 		// PLACE YOUR CODE HERE
 
 		// repay flashloan
-		const asset fee = sx::flash::calculate_fee( "flash.sx"_n, quantity );
-		token::transfer_action transfer( contract, { to, "active"_n });
-		transfer.send( to, "flash.sx"_n, quantity + fee, memo );
+		const asset fee = sx::flash::calculate_fee( code, amount.quantity );
+		token::transfer_action transfer( amount.contract, { receiver, "active"_n });
+		transfer.send( receiver, code, amount.quantity + fee, memo );
 	}
 };
