@@ -146,7 +146,7 @@ public:
     void setsettings( const sx::flash::settings settings );
 
     [[eosio::action]]
-    void flashlog( const name receiver, const extended_asset amount, const extended_asset fee );
+    void flashlog( const name receiver, const asset amount, const asset fee, const asset balance );
 
     /**
      * ## STATIC `calculate_fee`
@@ -176,6 +176,7 @@ public:
     using borrow_action = eosio::action_wrapper<"borrow"_n, &flash::borrow>;
     using callback_action = eosio::action_wrapper<"callback"_n, &flash::callback>;
     using checkbalance_action = eosio::action_wrapper<"checkbalance"_n, &flash::checkbalance>;
+    using flashlog_action = eosio::action_wrapper<"flashlog"_n, &flash::flashlog>;
 
 private:
     void check_open( const name contract, const name account, const symbol_code symcode );
