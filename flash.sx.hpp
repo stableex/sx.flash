@@ -1,13 +1,41 @@
+#pragma once
+
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
+#include <eosio/singleton.hpp>
 
-using namespace eosio;
-using namespace std;
+namespace sx {
 
-class [[eosio::contract("flash.sx")]] flash : public contract {
+using eosio::asset;
+using eosio::name;
+using eosio::check;
+using eosio::symbol_code;
+
+using std::string;
+using std::optional;
+
+class [[eosio::contract("flash.sx")]] flash : public eosio::contract {
 
 public:
     using contract::contract;
+
+    /**
+     * ## TABLE `settings`
+     *
+     * - `{uint8_t} fee` - processing fee (bips 1/100 of 1%)
+     *
+     * ### example
+     *
+     * ```json
+     * {
+     *     "fee": 0
+     * }
+     * ```
+     */
+    struct [[eosio::table("settings")]] settings {
+        uint8_t     fee = 0;
+    };
+    typedef eosio::singleton< "settings"_n, settings > settings_table;
 
     /**
      * ## TABLE `balances`
@@ -124,3 +152,4 @@ private:
     void check_open( const name contract, const name account, const symbol_code symcode );
     void save_balance( const name contract, const asset balance );
 };
+}

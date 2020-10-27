@@ -1,21 +1,23 @@
 #include <eosio.token/eosio.token.hpp>
+
 #include "flash.sx.hpp"
 
 [[eosio::action]]
-void flash::borrow( const name to, const name contract, const asset quantity, const optional<string> memo, const optional<name> notifier )
+void sx::flash::borrow( const name to, const name contract, const asset quantity, const optional<string> memo, const optional<name> notifier )
 {
     // no authority required
     check( is_account( to ), get_self().to_string() + ": " + to.to_string() + " account does not exists");
     const symbol_code symcode = quantity.symbol.code();
 
     // static actions
-    flash::callback_action callback( get_self(), { get_self(), "active"_n });
-    flash::checkbalance_action checkbalance( get_self(), { get_self(), "active"_n });
-    token::transfer_action transfer( contract, { get_self(), "active"_n });
+    sx::flash::callback_action callback( get_self(), { get_self(), "active"_n });
+    sx::flash::checkbalance_action checkbalance( get_self(), { get_self(), "active"_n });
+    eosio::token::transfer_action transfer( contract, { get_self(), "active"_n });
 
     // get initial balance of contract & save
     check_open( contract, get_self(), symcode );
-    const asset balance = token::get_balance( contract, get_self(), symcode );
+    const asset fee = eosio::token::get_balance( contract, get_self(), symcode );
+    const asset balance = eosio::token::get_balance( contract, get_self(), symcode );
     check( balance.amount >= quantity.amount, get_self().to_string() + ": maximum borrow amount is " + balance.to_string() );
     save_balance( contract, balance );
 
@@ -33,7 +35,7 @@ void flash::borrow( const name to, const name contract, const asset quantity, co
     checkbalance.send( contract, symcode );
 }
 
-void flash::save_balance( const name contract, const asset balance )
+void sx::flash::save_balance( const name contract, const asset balance )
 {
     // table
     balances_table _balances( get_self(), get_self().value );
@@ -49,7 +51,7 @@ void flash::save_balance( const name contract, const asset balance )
 }
 
 [[eosio::action]]
-void flash::checkbalance( const name contract, const symbol_code symcode )
+void sx::flash::checkbalance( const name contract, const symbol_code symcode )
 {
     require_auth( get_self() );
 
@@ -59,7 +61,7 @@ void flash::checkbalance( const name contract, const symbol_code symcode )
     check( itr != _balances.end(), get_self().to_string() + ": must first execute `borrow`");
 
     // get current balance
-    const asset balance = token::get_balance( contract, get_self(), symcode );
+    const asset balance = eosio::token::get_balance( contract, get_self(), symcode );
 
     // check balance of account, if below the desired amount, fail the transaction
     check( balance >= itr->balance, get_self().to_string() + ": borrowed quantity was not repaid before the end of inline action");
@@ -69,7 +71,7 @@ void flash::checkbalance( const name contract, const symbol_code symcode )
 }
 
 [[eosio::action]]
-void flash::callback( const name from, const name to, const name contract, const asset quantity, const string memo, const name notifier )
+void sx::flash::callback( const name from, const name to, const name contract, const asset quantity, const string memo, const name notifier )
 {
     require_auth( get_self() );
 
@@ -77,9 +79,9 @@ void flash::callback( const name from, const name to, const name contract, const
     require_recipient( notifier );
 }
 
-void flash::check_open( const name contract, const name account, const symbol_code symcode )
+void sx::flash::check_open( const name contract, const name account, const symbol_code symcode )
 {
-    token::accounts _accounts( contract, account.value );
+    eosio::token::accounts _accounts( contract, account.value );
     auto itr = _accounts.find( symcode.raw() );
     check( itr != _accounts.end(), get_self().to_string() + ": " + account.to_string() + " account must have " + symcode.to_string() + " `open` balance" );
 }
