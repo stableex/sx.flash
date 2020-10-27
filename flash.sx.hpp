@@ -38,7 +38,7 @@ public:
     typedef eosio::singleton< "settings"_n, settings > settings_table;
 
     /**
-     * ## TABLE `balances`
+     * ## TABLE `state`
      *
      * - `{name} contract` - contract name
      * - `{asset} balance` - balance amount
@@ -52,13 +52,11 @@ public:
      * }
      * ```
      */
-    struct [[eosio::table("balances")]] balances_row {
+    struct [[eosio::table("state")]] state {
         name        contract;
         asset       balance;
-
-        uint64_t primary_key() const { return contract.value; }
     };
-    typedef eosio::multi_index< "balances"_n, balances_row > balances_table;
+    typedef eosio::singleton< "state"_n, state > state_table;
 
     /**
      * ## ACTION `borrow`

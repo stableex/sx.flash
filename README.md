@@ -10,6 +10,7 @@
 - [ACTION `callback`](#action-callback)
 - [STATIC `calculate_fee`](#static-calculate_fee)
 - [TABLE `settings`](#action-settings)
+- [TABLE `state`](#action-state)
 
 ## Concept
 
@@ -109,5 +110,19 @@ const asset fee = sx::flash::calculate_fee( "flash.sx"_n, quantity );
 ```json
 {
     "fee": 0
+}
+```
+
+## TABLE `state`
+
+- `{name} contract` - contract name
+- `{asset} balance` - balance amount
+
+### example
+
+```json
+{
+    "contract": "eosio.token",
+    "balance": "1.0000 EOS"
 }
 ```

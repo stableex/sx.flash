@@ -47,16 +47,12 @@ void sx::flash::setsettings( const sx::flash::settings settings )
 void sx::flash::save_balance( const name contract, const asset balance )
 {
     // table
-    balances_table _balances( get_self(), get_self().value );
-    auto itr = _balances.find( contract.value );
-    check( itr == _balances.end(), get_self().to_string() + ": balance already exists, must now use `checkbalance`");
+    state_table _state( get_self(), get_self().value );
+    check( !_state.exists(), get_self().to_string() + ": balance already exists, must now use `checkbalance`");
 
     // save contract balance
     // can only be created once (to prevent double entry attacks)
-    _balances.emplace( get_self(), [&]( auto& row ) {
-        row.contract = contract;
-        row.balance = balance;
-    });
+    _state.set( {contract, balance}, get_self() );
 }
 
 [[eosio::action]]
@@ -65,18 +61,17 @@ void sx::flash::checkbalance( const name contract, const symbol_code symcode )
     require_auth( get_self() );
 
     // fetch previously saved balance
-    balances_table _balances( get_self(), get_self().value );
-    const auto itr = _balances.find( contract.value );
-    check( itr != _balances.end(), get_self().to_string() + ": must first execute `borrow`");
+    state_table _state( get_self(), get_self().value );
+    check( _state.exists(), get_self().to_string() + ": must first execute `borrow`");
 
     // get current balance
     const asset balance = eosio::token::get_balance( contract, get_self(), symcode );
 
     // check balance of account, if below the desired amount, fail the transaction
-    check( balance >= itr->balance, get_self().to_string() + ": borrowed quantity was not repaid before the end of inline action");
+    check( balance >= _state.get().balance, get_self().to_string() + ": borrowed quantity was not repaid before the end of inline action");
 
-    // delete balances once check is completed (to prevent double entry attacks)
-    _balances.erase( itr );
+    // delete state once check is completed (to prevent double entry attacks)
+    _state.remove();
 }
 
 [[eosio::action]]
