@@ -38,7 +38,7 @@ void sx::flash::borrow( const name receiver, const extended_asset amount, const 
     checkbalance.send( contract, symcode );
 
     // 4. Logging
-    flashlog.send( receiver, amount.quantity, fee, balance );
+    flashlog.send( receiver, amount.quantity, fee, balance + fee );
 }
 
 [[eosio::action]]
@@ -81,7 +81,7 @@ void sx::flash::checkbalance( const name contract, const symbol_code symcode )
 }
 
 [[eosio::action]]
-void sx::flash::flashlog( const name receiver, const asset amount, const asset fee, const asset balance )
+void sx::flash::flashlog( const name receiver, const asset borrow, const asset fee, const asset reserve )
 {
     require_auth( get_self() );
 

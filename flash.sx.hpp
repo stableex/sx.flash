@@ -146,7 +146,7 @@ public:
     void setsettings( const sx::flash::settings settings );
 
     [[eosio::action]]
-    void flashlog( const name receiver, const asset amount, const asset fee, const asset balance );
+    void flashlog( const name receiver, const asset borrow, const asset fee, const asset reserve );
 
     /**
      * ## STATIC `calculate_fee`
