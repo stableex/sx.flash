@@ -49,9 +49,8 @@ Account requests to borrow quantity
 ```c++
 const asset quantity = asset{10000, symbol{"EOS", 4}};
 
-const asset fee = sx::flash::calculate_fee( "flash.sx"_n, quantity );
 sx::flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
-borrow.send( get_self(), "eosio.token"_n, quantity + fee, "my memo", "notifyme" );
+borrow.send( get_self(), "eosio.token"_n, quantity, "my memo", "notifyme" );
 ```
 
 ### Example 2
@@ -81,8 +80,9 @@ Notifies recipient account via `callback` action after transfer has been sent fr
 [[eosio::on_notify("flash.sx::callback")]]
 void callback( const name from, const name to, const name contract, asset quantity, const string memo, const name recipient )
 {
-    eosio::token::transfer_action transfer( contract, { get_self(), "active"_n });
     const asset fee = sx::flash::calculate_fee( "flash.sx"_n, quantity );
+
+    eosio::token::transfer_action transfer( contract, { get_self(), "active"_n });
     transfer.send( get_self(), "flash.sx"_n, quantity + fee, memo );
 }
 ```

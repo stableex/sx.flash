@@ -133,8 +133,10 @@ public:
      * [[eosio::on_notify("flash.sx::callback")]]
      * void callback( const name from, const name to, const name contract, asset quantity, const string memo, const name notifier )
      * {
+     *     const asset fee = sx::flash::calculate_fee( "flash.sx"_n, quantity );
+     *
      *     token::transfer_action transfer( contract, { get_self(), "active"_n });
-     * 	   transfer.send( get_self(), "flash.sx"_n, quantity, memo );
+     * 	   transfer.send( get_self(), "flash.sx"_n, quantity + fee, memo );
      * }
      * ```
      */
