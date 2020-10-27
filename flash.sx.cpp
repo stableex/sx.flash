@@ -16,10 +16,10 @@ void sx::flash::borrow( const name to, const name contract, const asset quantity
 
     // get initial balance of contract & save
     check_open( contract, get_self(), symcode );
-    const asset fee = eosio::token::get_balance( contract, get_self(), symcode );
+    const asset fee = sx::flash::calculate_fee( get_self(), quantity );
     const asset balance = eosio::token::get_balance( contract, get_self(), symcode );
-    check( balance.amount >= quantity.amount, get_self().to_string() + ": maximum borrow amount is " + balance.to_string() );
-    save_balance( contract, balance );
+    check( balance - fee >= quantity, get_self().to_string() + ": maximum borrow amount is " + (balance - fee).to_string() );
+    save_balance( contract, balance + fee );
 
     // prevent sending transfer if `to` account does not contain any balance
     // prevents exploit from consuming RAM from contract
@@ -33,6 +33,15 @@ void sx::flash::borrow( const name to, const name contract, const asset quantity
 
     // 3. check if balance is higher than previous
     checkbalance.send( contract, symcode );
+}
+
+[[eosio::action]]
+void sx::flash::setsettings( const sx::flash::settings settings )
+{
+    require_auth( get_self() );
+
+    sx::flash::settings_table _settings( get_self(), get_self().value );
+    _settings.set( settings, get_self() );
 }
 
 void sx::flash::save_balance( const name contract, const asset balance )

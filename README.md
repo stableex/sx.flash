@@ -8,6 +8,8 @@
 - [Examples](#examples)
 - [ACTION `borrow`](#action-borrow)
 - [ACTION `callback`](#action-callback)
+- [STATIC `calculate_fee`](#static-calculate_fee)
+- [TABLE `settings`](#action-settings)
 
 ## Concept
 
@@ -78,5 +80,34 @@ void callback( const name from, const name to, const name contract, asset quanti
 {
     eosio::token::transfer_action transfer( contract, { get_self(), "active"_n });
     transfer.send( get_self(), "flash.sx"_n, quantity, memo );
+}
+```
+
+## STATIC `calculate_fee`
+
+Calculate processing fee
+
+### params
+
+- `{name} contract` - flash loan contract
+- `{asset} quantity` - quantity input
+
+### example
+
+```c++
+const asset quantity = asset{10000, symbol{"EOS", 4}}; // 1.0000 EOS
+const asset fee = sx::flash::calculate_fee( "flash.sx"_n, quantity );
+// => 0.0001 EOS
+```
+
+## TABLE `settings`
+
+- `{uint8_t} fee` - processing fee (bips 1/100 of 1%)
+
+### example
+
+```json
+{
+    "fee": 0
 }
 ```

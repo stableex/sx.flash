@@ -143,6 +143,33 @@ public:
     [[eosio::action]]
     void callback( const name from, const name to, const name contract, const asset quantity, const string memo, const name notifier );
 
+    [[eosio::action]]
+    void setsettings( const sx::flash::settings settings );
+
+    /**
+     * ## STATIC `calculate_fee`
+     *
+     * Calculate processing fee
+     *
+     * ### params
+     *
+     * - `{name} contract` - flash loan contract
+     * - `{asset} quantity` - quantity input
+     *
+     * ### example
+     *
+     * ```c++
+     * const asset quantity = asset{10000, symbol{"EOS", 4}}; // 1.0000 EOS
+     * const asset fee = sx::flash::calculate_fee( "flash.sx"_n, quantity );
+     * // => 0.0001 EOS
+     * ```
+     */
+    static asset calculate_fee( const name contract, const asset quantity )
+    {
+        sx::flash::settings_table _settings( contract, contract.value );
+        return _settings.get_or_default().fee * quantity / 10000;
+    }
+
     // action wrappers
     using borrow_action = eosio::action_wrapper<"borrow"_n, &flash::borrow>;
     using callback_action = eosio::action_wrapper<"callback"_n, &flash::callback>;

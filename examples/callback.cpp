@@ -16,7 +16,7 @@ public:
 	[[eosio::action]]
 	void init( const name to, const asset quantity )
 	{
-		flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
+		sx::flash::borrow_action borrow( "flash.sx"_n, { get_self(), "active"_n });
 		borrow.send( to, "eosio.token"_n, quantity, "callback memo", get_self() );
 	}
 
@@ -27,7 +27,8 @@ public:
 		// PLACE YOUR CODE HERE
 
 		// repay flashloan
+		const asset fee = sx::flash::calculate_fee( "flash.sx"_n, quantity );
 		token::transfer_action transfer( contract, { to, "active"_n });
-		transfer.send( to, "flash.sx"_n, quantity, memo );
+		transfer.send( to, "flash.sx"_n, quantity + fee, memo );
 	}
 };

@@ -29,5 +29,7 @@ cleos transfer eosio myaccount "50000.0000 EOS" "init"
 
 # open token balances
 cleos transfer eosio flash.sx "100.0000 EOS"
+cleos transfer eosio basic "1.0000 EOS"
+cleos transfer eosio callback "1.0000 EOS"
 cleos push action eosio.token open '["basic", "4,EOS", "basic"]' -p basic
 cleos push action eosio.token open '["myaccount", "4,EOS", "myaccount"]' -p myaccount
