@@ -123,6 +123,7 @@ public:
      * - `{name} code` - flash loan contract
      * - `{name} receiver` - receiver of flash loan
      * - `{extended_asset} amount` - flash loan request amount
+     * - `{asset} fee` - flash loan fee
      * - `{string} [memo=""]` - used for outgoing transfer
      * - `{name} [notifier=""]` - callback notifier account
      *
@@ -140,7 +141,7 @@ public:
      * ```
      */
     [[eosio::action]]
-    void callback( const name code, const name receiver, const extended_asset amount, const string memo, const name notifier );
+    void callback( const name code, const name receiver, const extended_asset amount, const asset fee, const string memo, const name notifier );
 
     [[eosio::action]]
     void setsettings( const sx::flash::settings settings );

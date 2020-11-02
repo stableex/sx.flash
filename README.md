@@ -70,6 +70,7 @@ Notifies recipient account via `callback` action after transfer has been sent fr
 - `{name} code` - flash loan contract
 - `{name} receiver` - receiver of flash loan
 - `{extended_asset} amount` - flash loan request amount
+- `{asset} fee` - flash loan fee
 - `{string} [memo=""]` - used for outgoing transfer
 - `{name} [notifier=""]` - callback notifier account
 
@@ -77,9 +78,8 @@ Notifies recipient account via `callback` action after transfer has been sent fr
 
 ```c++
 [[eosio::on_notify("flash.sx::callback")]]
-void callback( const name code, const name receiver, const extended_asset amount, const string memo, const name notifier )
+void callback( const name code, const name receiver, const extended_asset amount, const asset fee, const string memo, const name notifier )
 {
-    const asset fee = sx::flash::calculate_fee( code, amount.quantity );
     eosio::token::transfer_action transfer( amount.contract, { receiver, "active"_n });
     transfer.send( receiver, code, amount.quantity + fee, memo );
 }

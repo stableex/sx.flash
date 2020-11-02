@@ -32,7 +32,7 @@ void sx::flash::borrow( const name receiver, const extended_asset amount, const 
     transfer.send( get_self(), receiver, quantity, *memo );
 
     // 2. notify recipient accounts after transfer has been sent
-    if ( notifier->value ) callback.send( get_self(), receiver, extended_asset{quantity, contract}, *memo, *notifier );
+    if ( notifier->value ) callback.send( get_self(), receiver, extended_asset{quantity, contract}, fee, *memo, *notifier );
 
     // 3. check if balance is higher than previous
     checkbalance.send( contract, symcode );

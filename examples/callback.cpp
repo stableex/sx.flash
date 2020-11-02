@@ -21,13 +21,12 @@ public:
 	}
 
 	[[eosio::on_notify("flash.sx::callback")]]
-	void on_callback( const name code, const name receiver, const extended_asset amount, const string memo, const name notifier )
+	void on_callback( const name code, const name receiver, const extended_asset amount, const asset fee, const string memo, const name notifier )
 	{
 		// do actions before sending funds back
 		// PLACE YOUR CODE HERE
 
 		// repay flashloan
-		const asset fee = sx::flash::calculate_fee( code, amount.quantity );
 		token::transfer_action transfer( amount.contract, { receiver, "active"_n });
 		transfer.send( receiver, code, amount.quantity + fee, memo );
 	}
