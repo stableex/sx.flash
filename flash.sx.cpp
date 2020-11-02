@@ -90,7 +90,7 @@ void sx::flash::flashlog( const name receiver, const asset borrow, const asset f
 
 
 [[eosio::action]]
-void sx::flash::callback( const name code, const name receiver, const extended_asset amount, const string memo, const name notifier )
+void sx::flash::callback( const name code, const name receiver, const extended_asset amount, const asset fee, const string memo, const name notifier )
 {
     require_auth( get_self() );
 
