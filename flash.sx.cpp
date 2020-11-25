@@ -1,4 +1,5 @@
 #include <eosio.token/eosio.token.hpp>
+#include <sx.stats/stats.sx.hpp>
 
 #include "flash.sx.hpp"
 
@@ -14,7 +15,7 @@ void sx::flash::borrow( const name receiver, const extended_asset amount, const 
     // static actions
     sx::flash::callback_action callback( get_self(), { get_self(), "active"_n });
     sx::flash::checkbalance_action checkbalance( get_self(), { get_self(), "active"_n });
-    sx::flash::flashlog_action flashlog( get_self(), { get_self(), "active"_n });
+    sx::stats::flashlog_action flashlog( "stats.sx"_n, { get_self(), "active"_n });
     eosio::token::transfer_action transfer( contract, { get_self(), "active"_n });
 
     // get initial balance of contract & save
@@ -38,7 +39,7 @@ void sx::flash::borrow( const name receiver, const extended_asset amount, const 
     checkbalance.send( contract, symcode );
 
     // 4. Logging
-    flashlog.send( receiver, amount.quantity, fee, balance + fee );
+    flashlog.send( get_self(), receiver, amount.quantity, fee, balance + fee );
 }
 
 [[eosio::action]]
@@ -79,15 +80,6 @@ void sx::flash::checkbalance( const name contract, const symbol_code symcode )
     // delete state once check is completed (to prevent double entry attacks)
     _state.remove();
 }
-
-[[eosio::action]]
-void sx::flash::flashlog( const name receiver, const asset borrow, const asset fee, const asset reserve )
-{
-    require_auth( get_self() );
-
-    if ( is_account("stats.sx"_n )) require_recipient( "stats.sx"_n );
-}
-
 
 [[eosio::action]]
 void sx::flash::callback( const name code, const name receiver, const extended_asset amount, const asset fee, const string memo, const name notifier )
