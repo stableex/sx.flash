@@ -27,8 +27,8 @@
 
 ## Examples
 
-- [**basic.cpp**](/examples/basic.sx.cpp)
-- [**callback.cpp**](/examples/callback.sx.cpp)
+- [**basic.cpp**](/examples/basic.cpp)
+- [**callback.cpp**](/examples/callback.cpp)
 
 ## ACTION `borrow`
 
