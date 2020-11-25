@@ -1,5 +1,6 @@
 #include <eosio.token/eosio.token.hpp>
 #include <sx.stats/stats.sx.hpp>
+#include <sx.vaults/vaults.sx.hpp>
 
 #include "flash.sx.hpp"
 
@@ -36,10 +37,10 @@ void sx::flash::borrow( const name receiver, const extended_asset amount, const 
     if ( notifier->value ) callback.send( get_self(), receiver, extended_asset{quantity, contract}, fee, *memo, *notifier );
 
     // 3. check if balance is higher than previous
-    checkbalance.send( contract, symcode );
+    checkbalance.send( contract, symcode, fee );
 
     // 4. Logging
-    flashlog.send( get_self(), receiver, amount.quantity, fee, balance + fee );
+    if ( is_account("stats.sx"_n)) flashlog.send( get_self(), receiver, amount.quantity, fee, balance + fee );
 }
 
 [[eosio::action]]
@@ -63,7 +64,7 @@ void sx::flash::save_balance( const name contract, const asset balance )
 }
 
 [[eosio::action]]
-void sx::flash::checkbalance( const name contract, const symbol_code symcode )
+void sx::flash::checkbalance( const name contract, const symbol_code symcode, const asset fee )
 {
     require_auth( get_self() );
 
@@ -74,8 +75,14 @@ void sx::flash::checkbalance( const name contract, const symbol_code symcode )
     // get current balance
     const asset balance = eosio::token::get_balance( contract, get_self(), symcode );
 
-    // check balance of account, if below the desired amount, fail the transaction
+    // check balance of account, if below the desired amount,  fail the transaction
     check( balance >= _state.get().balance, get_self().to_string() + ": borrowed quantity was not repaid before the end of inline action");
+
+    // report EOS fees collected to vault.sx
+    if ( is_account("vaults.sx"_n) && balance.symbol == symbol{"EOS", 4}) {
+        sx::vaults::deposit_action deposit( "vaults.sx"_n, { get_self(), "active"_n });
+        deposit.send( symbol_code{"SXEOS"}, fee );
+    }
 
     // delete state once check is completed (to prevent double entry attacks)
     _state.remove();

@@ -4,7 +4,7 @@
 cleos push action basic init '["1.0000 EOS"]' -p basic
 
 # settings
-cleos push action flash.sx setsettings '[[1]]' -p flash.sx
+cleos push action flash.sx setsettings '[[2]]' -p flash.sx
 
 # callback
 cleos push action callback init '["myaccount", "1.0000 EOS"]' -p callback
