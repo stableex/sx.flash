@@ -91,7 +91,7 @@ Calculate processing fee
 
 ### params
 
-- `{name} contract` - flash loan contract
+- `{name} code` - flash loan code
 - `{asset} quantity` - quantity input
 
 ### example
@@ -99,7 +99,7 @@ Calculate processing fee
 ```c++
 const asset quantity = asset{10000, symbol{"EOS", 4}}; // 1.0000 EOS
 const asset fee = sx::flash::calculate_fee( "flash.sx"_n, quantity );
-// => 0.0001 EOS
+// => 0.0002 EOS
 ```
 
 ## TABLE `settings`
@@ -110,7 +110,7 @@ const asset fee = sx::flash::calculate_fee( "flash.sx"_n, quantity );
 
 ```json
 {
-    "fee": 0
+    "fee": 2
 }
 ```
 
