@@ -1,5 +1,5 @@
 #include <eosio.token/eosio.token.hpp>
-#include <sx.stats/stats.sx.hpp>
+#include <sx.vaults/vaults.sx.hpp>
 
 #include "flash.sx.hpp"
 
@@ -16,7 +16,11 @@ void sx::flash::borrow( const name receiver, const extended_asset amount, const 
     sx::flash::callback_action callback( get_self(), { get_self(), "active"_n });
     sx::flash::checkbalance_action checkbalance( get_self(), { get_self(), "active"_n });
     sx::flash::flashlog_action flashlog( get_self(), { get_self(), "active"_n });
+    sx::vaults::update_action update( "vaults.sx"_n, { get_self(), "active"_n });
     eosio::token::transfer_action transfer( contract, { get_self(), "active"_n });
+
+    // TESTING WHITELIST
+    check( receiver.suffix() == "sx"_n || receiver.suffix() == "eosn"_n, "contract under testing");
 
     // get initial balance of contract & save
     check_open( contract, get_self(), symcode );
@@ -40,7 +44,10 @@ void sx::flash::borrow( const name receiver, const extended_asset amount, const 
     // 4. check if balance is higher than previous
     checkbalance.send( contract, symcode, fee );
 
-    // logging
+    // 5. update vault balance
+    update.send( symcode );
+
+    // 6. logging
     flashlog.send( get_self(), receiver, amount, fee );
 }
 
