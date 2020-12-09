@@ -11,8 +11,10 @@ void sx::flash::on_transfer( const name from, const name to, const asset quantit
 {
     sx::flash::settings_table _settings( get_self(), get_self().value );
     sx::flash::state_table _state( get_self(), get_self().value );
+
+    if ( from == get_self() ) return;
     check( _settings.exists(), "code is under maintenance");
-    if ( from == "vaults.sx"_n ) check( !_state.exists(), "vaults.sx cannot deposit while flash loan is active");
+    if ( _state.exists() ) check( from == _state.get().receiver, get_self().to_string() + ": during active flash loan, incoming transfers must be from `receiver`");
 }
 
 [[eosio::action]]
@@ -31,9 +33,6 @@ void sx::flash::borrow( const name receiver, const extended_asset amount, const 
     sx::vaults::update_action update( "vaults.sx"_n, { get_self(), "active"_n });
     eosio::token::transfer_action transfer( contract, { get_self(), "active"_n });
 
-    // TESTING WHITELIST
-    check( receiver.suffix() == "sx"_n || receiver.suffix() == "eosn"_n, "contract under testing");
-
     // get initial balance of contract & save
     check_open( contract, get_self(), symcode );
     const asset fee = sx::flash::calculate_fee( get_self(), quantity );
@@ -45,7 +44,7 @@ void sx::flash::borrow( const name receiver, const extended_asset amount, const 
     check_open( contract, receiver, symcode );
 
     // 1. save existing balance of borrowed asset
-    save_balance( contract, balance + fee );
+    save_balance( receiver, contract, balance + fee );
 
     // 2. transfer funds to receiver
     transfer.send( get_self(), receiver, quantity, *memo );
@@ -82,14 +81,14 @@ void sx::flash::setsettings( const optional<sx::flash::settings> settings )
     else _settings.remove();
 }
 
-void sx::flash::save_balance( const name contract, const asset balance )
+void sx::flash::save_balance( const name receiver, const name contract, const asset balance )
 {
     // can only be created once (to prevent double entry attacks)
     state_table _state( get_self(), get_self().value );
     check( !_state.exists(), get_self().to_string() + ": balance already exists, must now use `checkbalance`");
 
     // save contract balance
-    _state.set( {contract, balance}, get_self() );
+    _state.set( {receiver, contract, balance}, get_self() );
 }
 
 [[eosio::action]]

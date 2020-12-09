@@ -35,6 +35,7 @@ public:
     /**
      * ## TABLE `state`
      *
+     * - `{name} receiver` - receiver of flash loan
      * - `{name} contract` - contract name
      * - `{asset} balance` - balance amount
      *
@@ -42,12 +43,14 @@ public:
      *
      * ```json
      * {
+     *     "receiver": "myaccount",
      *     "contract": "eosio.token",
      *     "balance": "1.0000 EOS"
      * }
      * ```
      */
     struct [[eosio::table("state")]] state {
+        name        receiver;
         name        contract;
         asset       balance;
     };
@@ -184,6 +187,6 @@ public:
 private:
     // flash
     void check_open( const name contract, const name account, const symbol_code symcode );
-    void save_balance( const name contract, const asset balance );
+    void save_balance( const name receiver, const name contract, const asset balance );
 };
 }

@@ -29,6 +29,5 @@ cleos push action eosio.token issue '["eosio", "5000000.0000 EOS", "init"]' -p e
 
 # send token balances
 cleos transfer eosio myaccount "50000.0000 EOS" "init"
-cleos transfer eosio flash.sx "100.0000 EOS" "init"
 cleos transfer eosio basic "1.0000 EOS"
 cleos transfer eosio callback "1.0000 EOS"
