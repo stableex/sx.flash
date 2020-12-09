@@ -145,6 +145,12 @@ public:
     void flashlog( const name code, const name receiver, const extended_asset amount, const asset fee );
 
     /**
+     * Notify contract when any token transfer notifiers relay contract
+     */
+    [[eosio::on_notify("*::transfer")]]
+    void on_transfer( const name from, const name to, const asset quantity, const string memo );
+
+    /**
      * ## STATIC `calculate_fee`
      *
      * Calculate processing fee

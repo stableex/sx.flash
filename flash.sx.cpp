@@ -3,6 +3,18 @@
 
 #include "flash.sx.hpp"
 
+/**
+ * Notify contract when any token transfer notifiers relay contract
+ */
+[[eosio::on_notify("*::transfer")]]
+void sx::flash::on_transfer( const name from, const name to, const asset quantity, const string memo )
+{
+    sx::flash::settings_table _settings( get_self(), get_self().value );
+    sx::flash::state_table _state( get_self(), get_self().value );
+    check( _settings.exists(), "code is under maintenance");
+    if ( from == "vaults.sx"_n ) check( !_state.exists(), "vaults.sx cannot deposit while flash loan is active");
+}
+
 [[eosio::action]]
 void sx::flash::borrow( const name receiver, const extended_asset amount, const optional<string> memo, const optional<name> notifier )
 {
