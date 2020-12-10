@@ -27,7 +27,7 @@ public:
 		// PLACE YOUR CODE HERE
 
 		// repay flashloan
-		token::transfer_action transfer( amount.contract, { get_self(), "active"_n });
-		transfer.send( get_self(), code, amount.quantity + fee, memo );
+		token::transfer_action transfer( amount.contract, { receiver, "active"_n });
+		transfer.send( receiver, code, amount.quantity + fee, memo );
 	}
 };

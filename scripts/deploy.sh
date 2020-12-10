@@ -22,6 +22,7 @@ cleos set account permission flash.sx active --add-code
 cleos set account permission basic active --add-code
 cleos set account permission callback active --add-code
 cleos set account permission myaccount active callback --add-code
+cleos set account permission vaults.sx active callback --add-code
 
 # create EOS token
 cleos push action eosio.token create '["eosio", "100000000.0000 EOS"]' -p eosio.token
@@ -29,5 +30,6 @@ cleos push action eosio.token issue '["eosio", "5000000.0000 EOS", "init"]' -p e
 
 # send token balances
 cleos transfer eosio myaccount "50000.0000 EOS" "init"
-cleos transfer eosio basic "1.0000 EOS"
-cleos transfer eosio callback "1.0000 EOS"
+cleos transfer eosio basic "100.0000 EOS"
+cleos transfer eosio callback "100.0000 EOS"
+cleos transfer eosio vaults.sx "100.0000 EOS"

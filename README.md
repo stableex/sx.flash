@@ -116,7 +116,6 @@ const asset fee = sx::flash::calculate_fee( "flash.sx"_n, quantity );
 
 ## TABLE `state`
 
-- `{name} receiver` - receiver of flash loan
 - `{name} contract` - contract name
 - `{asset} balance` - balance amount
 
@@ -124,7 +123,6 @@ const asset fee = sx::flash::calculate_fee( "flash.sx"_n, quantity );
 
 ```json
 {
-    "receiver": "myaccount",
     "contract": "eosio.token",
     "balance": "1.0000 EOS"
 }
