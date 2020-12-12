@@ -2,6 +2,21 @@
 
 > Borrow any amount of liquidity instantly for near-zero fees & no collateral.
 
+## SHA256 Checksum
+
+**Local**
+```bash
+$ eosio-cpp flash.sx.cpp -I include
+$ shasum -a 256 flash.sx.wasm
+c5c951f95c9fa420e68471e9372078313f03a7e5324eb3dd4bc02f15201509e1  flash.sx.wasm
+```
+
+**EOS Mainnet**
+```bash
+$ cleos -u https://api.eosn.io get code flash.sx
+code hash: c5c951f95c9fa420e68471e9372078313f03a7e5324eb3dd4bc02f15201509e1
+```
+
 ## Table of Content
 
 - [Concept](#concept)
