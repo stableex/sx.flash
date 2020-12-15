@@ -1,5 +1,7 @@
 # SX `Flashloans` ⚡️ - EOSIO Smart Contract
 
+[![Slowmist](https://www.slowmist.com/images/Logo-Security-Audit.png?v=1.1)](https://www.slowmist.com/en/security-audit-certificate.html?id=6150d086bd850b2ef57078becdbd773838c77a3edcb00d75e85dc569c56b536a)
+
 > Borrow any amount of liquidity instantly for near-zero fees & no collateral.
 
 ## Table of Content
