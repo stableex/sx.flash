@@ -1,8 +1,23 @@
-# SX `Flashloans` ⚡️ - EOSIO Smart Contract
+# SX `Flash Loans` ⚡️ - EOSIO Smart Contract
 
 [![Slowmist](https://www.slowmist.com/images/Logo-Security-Audit.png?v=1.1)](https://www.slowmist.com/en/security-audit-certificate.html?id=6150d086bd850b2ef57078becdbd773838c77a3edcb00d75e85dc569c56b536a)
 
 > Borrow any amount of liquidity instantly for near-zero fees & no collateral.
+
+## SHA256 Checksum
+
+**Local**
+```bash
+$ eosio-cpp flash.sx.cpp -I include
+$ shasum -a 256 flash.sx.wasm
+c5c951f95c9fa420e68471e9372078313f03a7e5324eb3dd4bc02f15201509e1  flash.sx.wasm
+```
+
+**EOS Mainnet**
+```bash
+$ cleos -u https://api.eosn.io get code flash.sx
+code hash: c5c951f95c9fa420e68471e9372078313f03a7e5324eb3dd4bc02f15201509e1
+```
 
 ## Table of Content
 
