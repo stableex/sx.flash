@@ -95,16 +95,15 @@ public:
      *
      * - `{name} contract` - contract name
      * - `{symbol_code} symcode` - symbol code
-     * - `{asset} fee` - processing fee
      *
      * ### Example
      *
      * ```bash
-     * $ cleos push action flash.sx checkbalance '["eosio.token", "EOS", "0.0002 EOS"]' -p myaccount
+     * $ cleos push action flash.sx checkbalance '["eosio.token", "EOS"]' -p myaccount
      * ```
      */
     [[eosio::action]]
-    void checkbalance( const name contract, const symbol_code symcode, const asset fee );
+    void checkbalance( const name contract, const symbol_code symcode );
 
     /**
      * ## ACTION `callback`

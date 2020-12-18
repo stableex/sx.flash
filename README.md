@@ -25,6 +25,7 @@ code hash: c5c951f95c9fa420e68471e9372078313f03a7e5324eb3dd4bc02f15201509e1
 - [Examples](#examples)
 - [ACTION `borrow`](#action-borrow)
 - [ACTION `callback`](#action-callback)
+- [ACTION `checkbalance`](#action-checkbalance)
 - [STATIC `calculate_fee`](#static-calculate_fee)
 - [TABLE `settings`](#action-settings)
 - [TABLE `state`](#action-state)
@@ -100,6 +101,23 @@ void callback( const name code, const name receiver, const extended_asset amount
     eosio::token::transfer_action transfer( amount.contract, { receiver, "active"_n });
     transfer.send( receiver, code, amount.quantity + fee, memo );
 }
+```
+
+## ACTION `checkbalance`
+
+Throws error if contract does not have equal or above previously saved balance
+
+- **authority**: `get_self()`
+
+### params
+
+- `{name} contract` - contract name
+- `{symbol_code} symcode` - symbol code
+
+### Example
+
+```bash
+$ cleos push action flash.sx checkbalance '["eosio.token", "EOS"]' -p myaccount
 ```
 
 ## STATIC `calculate_fee`

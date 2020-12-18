@@ -54,7 +54,7 @@ void sx::flash::borrow( const name receiver, const extended_asset amount, const 
     if ( notifier->value ) callback.send( get_self(), receiver, extended_asset{quantity, contract}, fee, *memo, *notifier );
 
     // 4. check if balance is higher than previous
-    checkbalance.send( contract, symcode, fee );
+    checkbalance.send( contract, symcode );
 
     // 5. update vault balance
     update.send( symcode );
@@ -93,7 +93,7 @@ void sx::flash::save_balance( const name contract, const asset balance )
 }
 
 [[eosio::action]]
-void sx::flash::checkbalance( const name contract, const symbol_code symcode, const asset fee )
+void sx::flash::checkbalance( const name contract, const symbol_code symcode )
 {
     require_auth( get_self() );
 
