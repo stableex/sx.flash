@@ -56,10 +56,7 @@ void sx::flash::borrow( const name receiver, const extended_asset amount, const 
     // 4. check if balance is higher than previous
     checkbalance.send( contract, symcode, fee );
 
-    // 5. update vault balance
-    update.send( symcode );
-
-    // 6. logging
+    // 5. logging
     flashlog.send( get_self(), receiver, amount, fee );
 }
 
@@ -69,7 +66,7 @@ void sx::flash::flashlog( const name code, const name receiver, const extended_a
     require_auth( get_self() );
 
     if ( is_account("stats.sx"_n) ) require_recipient( "stats.sx"_n );
-    if ( is_account("vaults.sx"_n) ) require_recipient( "vaults.sx"_n );
+    if ( is_account("detect.sx"_n) ) require_recipient( "detect.sx"_n );
 }
 
 [[eosio::action]]
